@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+    <title>Академия Качества</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7f5f2;
+            color: #1e1c1a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            margin: 0;
+        }
+        .app {
+            max-width: 480px;
+            width: 100%;
+            min-height: 700px;
+            height: 95vh;
+            max-height: 860px;
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .app-header {
+            padding: 24px 24px 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            flex-shrink: 0;
+        }
+        .app-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2d2a27;
+            letter-spacing: -0.3px;
+        }
+        .app-header .badge-role {
+            background: rgba(0,0,0,0.04);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #5a5550;
+        }
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px 24px 24px;
+            scroll-behavior: smooth;
+        }
+        .main-content::-webkit-scrollbar { width: 4px; }
+        .main-content::-webkit-scrollbar-thumb { background: #d4b5a0; border-radius: 20px; }
+
+        .page {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeUp 0.3s ease;
+        }
+        .page.active { display: flex; }
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 24px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: #eeeae6;
+            color: #2d2a27;
+            width: 100%;
+        }
+        .btn-primary {
+            background: #2d2a27;
+            color: white;
+            box-shadow: 0 8px 20px rgba(45,42,39,0.12);
+        }
+        .btn-primary:hover { background: #1f1c1a; transform: scale(0.98); }
+        .btn-secondary {
+            background: rgba(0,0,0,0.04);
+            color: #2d2a27;
+        }
+        .btn-success {
+            background: #6b8f7a;
+            color: white;
+        }
+        .btn:active { transform: scale(0.96); }
+        .btn:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .welcome-logo { font-size: 80px; text-align: center; display: block; margin: 10px 0 8px; }
+        .welcome-title {
+            font-size: 36px;
+            font-weight: 800;
+            color: #2d2a27;
+            text-align: center;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+        }
+        .welcome-title span { color: #b87c5a; }
+        .welcome-sub {
+            text-align: center;
+            font-size: 16px;
+            color: #5a5550;
+            margin: 8px 0 16px;
+            line-height: 1.5;
+        }
+        .welcome-tags {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 4px 0 12px;
+        }
+        .welcome-tags span {
+            background: rgba(0,0,0,0.03);
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #5a5550;
+        }
+        .welcome-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin: 12px 0 16px;
+        }
+        .welcome-feature {
+            text-align: center;
+            padding: 12px 4px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #3d3834;
+            background: rgba(0,0,0,0.02);
+            border-radius: 16px;
+        }
+        .welcome-feature .icon { font-size: 28px; display: block; margin-bottom: 4px; }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .role-item {
+            background: rgba(0,0,0,0.02);
+            border-radius: 20px;
+            padding: 18px 12px;
+            text-align: center;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .role-item:hover { background: rgba(0,0,0,0.04); }
+        .role-item:active { transform: scale(0.96); }
+        .role-item .emoji { font-size: 34px; display: block; margin-bottom: 6px; }
+        .role-item .label { font-weight: 600; font-size: 15px; color: #2d2a27; }
+
+        .progress-track {
+            display: flex;
+            gap: 6px;
+            margin: 12px 0 8px;
+        }
+        .progress-step {
+            flex: 1;
+            height: 5px;
+            border-radius: 20px;
+            background: rgba(0,0,0,0.06);
+            transition: background 0.3s;
+        }
+        .progress-step.done { background: #d4b5a0; }
+        .progress-step.active { background: #b8957a; }
+
+        .points-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d2a27;
+            background: rgba(0,0,0,0.04);
+            padding: 4px 14px 4px 10px;
+            border-radius: 40px;
+        }
+
+        .step-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d2a27;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+        .step-text {
+            font-size: 15px;
+            color: #3d3834;
+            line-height: 1.6;
+        }
+        .step-text p { margin-bottom: 12px; }
+        .step-highlight {
+            background: rgba(212,181,160,0.08);
+            border-left: 4px solid #d4b5a0;
+            padding: 14px 16px;
+            border-radius: 0 12px 12px 0;
+            font-size: 15px;
+            line-height: 1.5;
+            color: #3d3834;
+            margin: 8px 0;
+        }
+        .step-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 8px 0;
+        }
+        .step-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 15px;
+            color: #3d3834;
+            line-height: 1.4;
+        }
+        .step-list li::before {
+            content: "▹";
+            color: #b8957a;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        .reflection-block {
+            background: rgba(100,150,255,0.05);
+            border-left: 4px solid #8899bb;
+            padding: 12px 16px;
+            border-radius: 0 12px 12px 0;
+            margin: 8px 0 12px;
+            font-size: 14px;
+            color: #3d3d4a;
+        }
+        .reflection-block strong { color: #2d2a27; }
+
+        .badge-earned {
+            background: rgba(107,143,122,0.12);
+            border-radius: 40px;
+            padding: 6px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #3a5a4a;
+        }
+        .role-tag {
+            background: #2d2a27;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* Мини-задания */
+        .step-quiz {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+        .step-quiz .quiz-question {
+            margin-bottom: 10px;
+        }
+        .step-quiz .quiz-question p {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #2d2a27;
+        }
+        .step-quiz .quiz-option {
+            display: block;
+            background: rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.04);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.1s;
+            font-size: 14px;
+            color: #3d3834;
+        }
+        .step-quiz .quiz-option:hover { background: rgba(0,0,0,0.04); }
+        .step-quiz .quiz-option.selected {
+            background: rgba(212,181,160,0.2);
+            border-color: #d4b5a0;
+        }
+        .step-quiz .quiz-option.correct {
+            background: rgba(107,143,122,0.15);
+            border-color: #6b8f7a;
+        }
+        .step-quiz .quiz-option.wrong {
+            background: rgba(200,100,100,0.12);
+            border-color: #c96868;
+        }
+        .step-quiz .quiz-option.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .step-quiz .quiz-feedback {
+            margin-top: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .step-quiz .quiz-feedback.correct { color: #3a5a4a; }
+        .step-quiz .quiz-feedback.wrong { color: #b85a5a; }
+
+        /* финальный тест */
+        .quiz-final .quiz-option {
+            display: block;
+            background: rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.04);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.1s;
+            font-size: 14px;
+            color: #3d3834;
+        }
+        .quiz-final .quiz-option:hover { background: rgba(0,0,0,0.04); }
+        .quiz-final .quiz-option.selected {
+            background: rgba(212,181,160,0.2);
+            border-color: #d4b5a0;
+        }
+        .quiz-final .quiz-option.correct {
+            background: rgba(107,143,122,0.15);
+            border-color: #6b8f7a;
+        }
+        .quiz-final .quiz-option.wrong {
+            background: rgba(200,100,100,0.12);
+            border-color: #c96868;
+        }
+        .quiz-final .quiz-option.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 460px) {
+            .app { border-radius: 0; height: 100vh; max-height: 100vh; }
+            .app-header { padding: 16px 16px 8px 16px; }
+            .main-content { padding: 12px 16px 16px; }
+            .role-grid { gap: 8px; }
+            .role-item { padding: 14px 8px; }
+            .role-item .emoji { font-size: 28px; }
+            .welcome-logo { font-size: 60px; }
+            .welcome-title { font-size: 28px; }
+            .welcome-features { grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
+            .welcome-feature { font-size: 11px; padding: 8px 2px; }
+            .welcome-feature .icon { font-size: 22px; }
+            .step-title { font-size: 20px; }
+        }
+        @media (min-width: 600px) {
+            .app { max-width: 560px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app" id="app">
+        <header class="app-header">
+            <h1>🍽️ Академия</h1>
+            <div>
+                <span class="badge-role" id="roleBadge">Привет!</span>
+                <span class="points-badge" id="pointsDisplay" style="margin-left:8px;">⭐ 0</span>
+            </div>
+        </header>
+
+        <div class="main-content" id="mainContent">
+            <!-- ЗАСТАВКА -->
+            <div class="page active" id="pageWelcome">
+                <div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:20px 0;">
+                    <span class="welcome-logo">🧑‍🍳</span>
+                    <h1 class="welcome-title">Академия<br><span>качества</span></h1>
+                    <p class="welcome-sub">Микрообучение для команды ресторанов доставки</p>
+                    <div class="welcome-tags">
+                        <span>#качество</span>
+                        <span>#команда</span>
+                        <span>#гость</span>
+                    </div>
+                    <div class="welcome-features">
+                        <div class="welcome-feature"><span class="icon">🎯</span>6 шагов</div>
+                        <div class="welcome-feature"><span class="icon">⭐</span>Бейджи</div>
+                        <div class="welcome-feature"><span class="icon">📚</span>По ролям</div>
+                    </div>
+                    <button class="btn btn-primary" id="startBtn" style="margin-top:16px;">🚀 Начать обучение</button>
+                    <div style="margin-top:12px; font-size:13px; color:#9e928a; text-align:center;">~ 7 минут · для всех должностей</div>
+                </div>
+            </div>
+
+            <!-- ВЫБОР РОЛИ -->
+            <div class="page" id="pageRoles">
+                <div>
+                    <h2 class="step-title">Кто ты в команде?</h2>
+                    <p style="font-size:15px; color:#5a5550; margin-top:4px;">Выбери свою роль, чтобы начать обучение. Каждый модуль адаптирован под твои задачи.</p>
+                </div>
+                <div class="role-grid" id="roleGrid">
+                    <div class="role-item" data-role="povar"><span class="emoji">👨‍🍳</span><span class="label">Повар</span></div>
+                    <div class="role-item" data-role="shef"><span class="emoji">🧑‍🍳</span><span class="label">Шеф-повар</span></div>
+                    <div class="role-item" data-role="sbor"><span class="emoji">📦</span><span class="label">Сборщик</span></div>
+                    <div class="role-item" data-role="kurier"><span class="emoji">🛵</span><span class="label">Курьер</span></div>
+                    <div class="role-item" data-role="manager"><span class="emoji">📊</span><span class="label">Менеджер</span></div>
+                    <div class="role-item" data-role="director"><span class="emoji">🏢</span><span class="label">Директор</span></div>
+                </div>
+                <div style="margin-top:8px; font-size:13px; color:#9e928a; text-align:center;">Обучение построено на принципах качества и командной ответственности</div>
+                <button class="btn btn-secondary" id="backToWelcomeBtn" style="margin-top:12px;">← На главную</button>
+            </div>
+
+            <!-- ОБУЧЕНИЕ -->
+            <div class="page" id="pageTraining">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <span class="role-tag" id="trainingRoleTag">Повар</span>
+                    <span style="font-size:14px; font-weight:500; color:#5a5550;">Шаг <span id="stepCounter">1</span>/6</span>
+                </div>
+                <div class="progress-track" id="progressTrack">
+                    <span class="progress-step" data-step="1"></span>
+                    <span class="progress-step" data-step="2"></span>
+                    <span class="progress-step" data-step="3"></span>
+                    <span class="progress-step" data-step="4"></span>
+                    <span class="progress-step" data-step="5"></span>
+                    <span class="progress-step" data-step="6"></span>
+                </div>
+                <div id="stepContainer" style="margin-top:16px;"></div>
+                <div style="display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;">
+                    <button class="btn btn-secondary" id="prevStepBtn" style="flex:1;">← Назад</button>
+                    <button class="btn btn-primary" id="nextStepBtn" style="flex:2;">Далее →</button>
+                </div>
+                <button class="btn btn-success" id="finishTrainingBtn" style="display:none; margin-top:10px;">🏁 Завершить и получить бейдж</button>
+            </div>
+
+            <!-- ФИНИШ -->
+            <div class="page" id="pageFinish">
+                <div style="text-align:center; padding:20px 0;">
+                    <div style="font-size:64px; margin-bottom:12px;">🏆</div>
+                    <h2 class="step-title">Ты — Страж Качества!</h2>
+                    <div class="badge-earned" style="margin:16px 0; justify-content:center;">
+                        <span class="icon">⭐</span> Бейдж «Мастер качества»
+                    </div>
+                    <p style="font-size:15px; color:#5a5550; margin:12px 0;">Ты прошёл обучение по стандартам качества для своей роли. Каждый день — вклад в довольного гостя.</p>
+                    <div style="background:rgba(0,0,0,0.02); border-radius:20px; padding:16px; margin:12px 0; text-align:left;">
+                        <div style="font-weight:600; margin-bottom:6px;">📌 Что дальше?</div>
+                        <ul style="list-style:none; padding:0; font-size:14px; color:#3d3834; line-height:1.7;">
+                            <li>✔ Применяй знания на каждой смене</li>
+                            <li>✔ Участвуй в пятиминутках и делись опытом</li>
+                            <li>✔ Следи за качеством вместе с командой</li>
+                        </ul>
+                    </div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+                        <button class="btn btn-secondary" id="resetBtn" style="flex:1;">🔄 Пройти заново</button>
+                        <button class="btn btn-secondary" id="finishToWelcomeBtn" style="flex:1;">🏠 На главную</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ============================
+            // 1. ДАННЫЕ С МИНИ-ЗАДАНИЯМИ И ПОМЕТКАМИ "ПОДУМАЙ"
+            // ============================
+            const quizData = [
+                {
+                    question: 'Что важнее всего при приготовлении блюда?',
+                    options: ['Скорость приготовления', 'Качество ингредиентов и соблюдение СТК', 'Количество порций', 'Яркая подача'],
+                    correct: 1
+                },
+                {
+                    question: 'Почему важно проверять температуру блюда перед отправкой?',
+                    options: ['Чтобы гость получил блюдо правильной температуры', 'Чтобы ускорить доставку', 'Чтобы сэкономить упаковку', 'Это не влияет на качество'],
+                    correct: 0
+                },
+                {
+                    question: 'Что делать, если заметил нарушение на любом этапе?',
+                    options: ['Пропустить, если никто не видит', 'Остановить процесс и исправить, сообщить администрации', 'Отправить как есть, гость не заметит', 'Сделать вид, что всё в порядке'],
+                    correct: 1
+                }
+            ];
+
+            // Для каждой роли — 5 шагов, у каждого есть quiz (одно задание)
+            const trainingData = {
+                povar: {
+                    label: 'Повар',
+                    emoji: '👨‍🍳',
+                    steps: [
+                        { 
+                            title: 'Качество — твоя подпись',
+                            content: `<p>Каждое блюдо — это лицо ресторана. Гость чувствует вкус, текстуру и температуру.</p>
+                                <div class="step-highlight">🔥 <strong>Твоя задача:</strong> готовить точно по СТК, соблюдать рецептуру и контролировать внешний вид.</div>
+                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами и ответь себе сам:</strong></div>
+                                <ul class="step-list">
+                                    <li>Почему качество ингредиентов влияет на вкус?</li>
+                                    <li>Как температура приготовления сохраняет текстуру?</li>
+                                    <li>Что значит «презентабельность» блюда?</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Какой фактор НЕ относится к контролю качества блюда?',
+                                options: ['Свежесть ингредиентов', 'Цвет упаковки', 'Соблюдение рецептуры', 'Температура подачи'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Гость выбирает нас за вкус',
+                            content: `<p>Когда ты вкладываешь душу в блюдо, гость это чувствует. Твоя работа — главная причина, почему люди возвращаются.</p>
+                                <div class="step-highlight">💡 <strong>Личная выгода:</strong> гордость за своё дело, меньше возвратов, больше благодарностей.</div>
+                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div>
+                                <ul class="step-list">
+                                    <li>Представь, что это блюдо для твоей семьи.</li>
+                                    <li>Какой комплимент ты хотел бы услышать?</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Что помогает сохранить вкус блюда при приготовлении?',
+                                options: ['Большое количество порций', 'Точное соблюдение температуры', 'Быстрая подача', 'Яркое оформление'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Стандарты и инструменты',
+                            content: `<p>Ты должен знать:</p>
+                                <ul class="step-list">
+                                    <li><strong>СТК</strong> — технологические карты на каждое блюдо.</li>
+                                    <li><strong>Дегустации</strong> — 2 раза в неделю сверяем вкус и внешний вид.</li>
+                                    <li><strong>Контроль веса</strong> — каждое блюдо взвешивается.</li>
+                                    <li><strong>Температурный режим</strong> — горячее должно быть горячим.</li>
+                                </ul>
+                                <div class="step-highlight">📚 Все стандарты в Мотивити (СТК, шаблоны).</div>`,
+                            quiz: {
+                                question: 'Что такое СТК?',
+                                options: ['Система термоконтроля', 'Стандарт технологической карты', 'Способ тепловой обработки', 'Специальный термометр'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Практика — проверка качества',
+                            content: `<p>Теперь ты готов применить знания:</p>
+                                <ul class="step-list">
+                                    <li>✅ Проверь вес порции — отклонение недопустимо.</li>
+                                    <li>✅ Оцени внешний вид — аккуратность и наличие всех ингредиентов.</li>
+                                    <li>✅ Убедись, что упаковка герметична.</li>
+                                </ul>
+                                <div class="step-highlight">⚡ <strong>Совет:</strong> перед подачей всегда проверяй блюдо глазами гостя.</div>`,
+                            quiz: {
+                                question: 'Какое действие НЕ входит в проверку блюда перед отправкой?',
+                                options: ['Проверить вес', 'Оценить внешний вид', 'Проверить цену', 'Убедиться в герметичности упаковки'],
+                                correct: 2
+                            }
+                        },
+                        { 
+                            title: 'Каждый день — шаг к совершенству',
+                            content: `<p>Качество — это привычка. Внедряй в свою смену:</p>
+                                <ul class="step-list">
+                                    <li>🔹 Участвуй в <strong>пятиминутках</strong> — обсуждай ошибки и успехи.</li>
+                                    <li>🔹 Не бойся просить переделать, если заметил нарушение.</li>
+                                    <li>🔹 Делитесь опытом с коллегами.</li>
+                                </ul>
+                                <div class="step-highlight">🌟 Помни: довольный гость — результат твоей работы.</div>`,
+                            quiz: {
+                                question: 'Что помогает улучшать качество в команде?',
+                                options: ['Игнорирование мелких ошибок', 'Пятиминутки и разборы', 'Увеличение скорости работы', 'Сокращение порций'],
+                                correct: 1
+                            }
+                        }
+                    ]
+                },
+                shef: {
+                    label: 'Шеф-повар',
+                    emoji: '🧑‍🍳',
+                    steps: [
+                        { 
+                            title: 'Ты — лидер качества на кухне',
+                            content: `<p>Ты отвечаешь за стандарты всей кухни. Качество каждого блюда — зона твоей ответственности.</p>
+                                <div class="step-highlight">🔥 <strong>Твоя миссия:</strong> контролировать процессы, обучать команду и быть примером.</div>
+                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами и ответь себе сам:</strong></div>
+                                <ul class="step-list">
+                                    <li>Как ты оцениваешь работу поваров?</li>
+                                    <li>Какие инструменты контроля ты используешь?</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Что входит в обязанности шеф-повара по контролю качества?',
+                                options: ['Только приготовление блюд', 'Контроль всех процессов и обучение команды', 'Оформление заказов', 'Доставка блюд гостям'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Репутация и доверие',
+                            content: `<p>Твоё имя связывают с качеством. Гости доверяют бренду, потому что ты гарантируешь вкус.</p>
+                                <div class="step-highlight">💡 <strong>Личная мотивация:</strong> гордиться каждым блюдом, выходящим с кухни.</div>
+                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div>
+                                <ul class="step-list">
+                                    <li>Как ты вдохновляешь команду на качество?</li>
+                                    <li>Что для тебя значит «идеальный заказ»?</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Почему репутация шеф-повара важна для ресторана?',
+                                options: ['Потому что он готовит самые вкусные блюда', 'Потому что он гарантирует стабильное качество и доверие гостей', 'Потому что он быстрее всех работает', 'Потому что он отвечает за закупки'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Управление качеством',
+                            content: `<p>Ты должен владеть:</p>
+                                <ul class="step-list">
+                                    <li><strong>СТК</strong> — контроль исполнения.</li>
+                                    <li><strong>Дегустации</strong> — лично пробуй и сравнивай с эталоном.</li>
+                                    <li><strong>Санитария</strong> — чистота кухни и оборудования.</li>
+                                    <li><strong>Температура</strong> — от холодильника до термосумки.</li>
+                                </ul>
+                                <div class="step-highlight">📋 Внедряй чек-листы контроля на каждой смене.</div>`,
+                            quiz: {
+                                question: 'Какой инструмент НЕ относится к управлению качеством на кухне?',
+                                options: ['Чек-листы', 'Дегустации', 'Социальные сети', 'Контроль температуры'],
+                                correct: 2
+                            }
+                        },
+                        { 
+                            title: 'Наставничество и аудит',
+                            content: `<p>Проведи аудит своей кухни:</p>
+                                <ul class="step-list">
+                                    <li>✅ Проверь соблюдение СТК у каждого повара.</li>
+                                    <li>✅ Организуй дегустацию и обсуди результаты.</li>
+                                    <li>✅ Убедись, что весы и термометры работают корректно.</li>
+                                </ul>
+                                <div class="step-highlight">📢 Обучай команду — делитесь стандартами и фиксируйте ошибки.</div>`,
+                            quiz: {
+                                question: 'Что должен делать шеф-повар при обнаружении системной ошибки на кухне?',
+                                options: ['Наказать виновного', 'Разобрать причину и обучить команду', 'Уволить сотрудника', 'Замолчать проблему'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Культура качества',
+                            content: `<p>Создай систему, где качество — норма жизни:</p>
+                                <ul class="step-list">
+                                    <li>🔹 Ежедневные пятиминутки с разбором.</li>
+                                    <li>🔹 Поощряй тех, кто замечает и исправляет нарушения.</li>
+                                    <li>🔹 Внедряй «золотые стандарты» на кухне.</li>
+                                </ul>
+                                <div class="step-highlight">🌟 Ты — главный хранитель качества. От тебя зависит репутация.</div>`,
+                            quiz: {
+                                question: 'Какой метод помогает закрепить культуру качества на кухне?',
+                                options: ['Запрет на обсуждение ошибок', 'Регулярные пятиминутки и поощрение инициативы', 'Увеличение нагрузки на поваров', 'Сокращение времени приготовления'],
+                                correct: 1
+                            }
+                        }
+                    ]
+                },
+                sbor: {
+                    label: 'Сборщик',
+                    emoji: '📦',
+                    steps: [
+                        { 
+                            title: 'Сборка — последний штрих',
+                            content: `<p>Ты формируешь заказ, который увидит гость. От твоей аккуратности зависит первое впечатление.</p>
+                                <div class="step-highlight">🔥 <strong>Твоя задача:</strong> полная комплектация, внешний вид и сохранение температуры.</div>
+                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div>
+                                <ul class="step-list">
+                                    <li>Почему важно проверять каждую позицию?</li>
+                                    <li>Как упаковка влияет на восприятие блюда?</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Что входит в обязанности сборщика?',
+                                options: ['Готовить блюда', 'Комплектовать заказы и проверять внешний вид', 'Доставлять заказы гостям', 'Закупать продукты'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Гордость за каждую коробку',
+                            content: `<p>Когда гость открывает заказ и видит идеальную сборку — это твоя заслуга.</p>
+                                <div class="step-highlight">💡 <strong>Личная выгода:</strong> минимум возвратов, максимум благодарностей.</div>
+                                <div class="reflection-block"><strong>🤔 Подумай над этим вопросом:</strong></div>
+                                <ul class="step-list">
+                                    <li>Представь, что заказ едет тебе. Что бы ты хотел увидеть?</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Почему важно проверять каждую позицию заказа?',
+                                options: ['Чтобы ускорить работу', 'Чтобы избежать ошибок в комплектации и сохранить репутацию', 'Чтобы сэкономить упаковку', 'Это не обязательно'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Чек-лист сборщика',
+                            content: `<ul class="step-list">
+                                    <li><strong>Внешний вид</strong> — аккуратность, наличие всех ингредиентов.</li>
+                                    <li><strong>Разделение</strong> — горячее и холодное в Гостевом боксе.</li>
+                                    <li><strong>Упаковка</strong> — правильный бокс, герметичность.</li>
+                                    <li><strong>Вес</strong> — сверь с нормой.</li>
+                                    <li><strong>Наличие</strong> — все позиции по бланку.</li>
+                                </ul>
+                                <div class="step-highlight">📋 Проверь себя дважды перед отправкой.</div>`,
+                            quiz: {
+                                question: 'Какое действие НЕ указано в чек-листе сборщика?',
+                                options: ['Проверить разделение горячего и холодного', 'Оценить вкус блюда', 'Проверить правильность упаковки', 'Сверить вес'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Контроль качества на линии',
+                            content: `<p>Практический этап:</p>
+                                <ul class="step-list">
+                                    <li>✅ Сверь заказ с бланком и стикерами.</li>
+                                    <li>✅ Убедись, что нет инородных предметов.</li>
+                                    <li>✅ Проверь целостность упаковки.</li>
+                                    <li>✅ Раздели горячее и холодное.</li>
+                                </ul>
+                                <div class="step-highlight">⚡ Нашёл нарушение — останови процесс и исправь.</div>`,
+                            quiz: {
+                                question: 'Что делать, если сборщик заметил нарушение?',
+                                options: ['Продолжить сборку, не обращая внимания', 'Остановить процесс и исправить, сообщить администрации', 'Отправить заказ как есть', 'Свалить вину на другого'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Каждая секунда — качество',
+                            content: `<p>Сделай контроль частью своей рутины:</p>
+                                <ul class="step-list">
+                                    <li>🔹 Участвуй в пятиминутках.</li>
+                                    <li>🔹 Если сомневаешься — перепроверь.</li>
+                                    <li>🔹 Говори о нарушениях открыто.</li>
+                                </ul>
+                                <div class="step-highlight">🌟 Твоя сборка — это лицо ресторана для гостя.</div>`,
+                            quiz: {
+                                question: 'Как сборщик может повысить качество своей работы?',
+                                options: ['Игнорировать сомнения', 'Участвовать в обсуждениях и всегда перепроверять', 'Работать быстрее в ущерб качеству', 'Сокращать количество проверок'],
+                                correct: 1
+                            }
+                        }
+                    ]
+                },
+                kurier: {
+                    label: 'Курьер',
+                    emoji: '🛵',
+                    steps: [
+                        { 
+                            title: 'Ты — финальная миля качества',
+                            content: `<p>Гость ждёт заказ, а ты — его связь с рестораном. Температура и аккуратность в твоих руках.</p>
+                                <div class="step-highlight">🔥 <strong>Твоя задача:</strong> доставить блюдо горячим, целым и в срок.</div>
+                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div>
+                                <ul class="step-list">
+                                    <li>Как температура влияет на вкус?</li>
+                                    <li>Что значит «бережная доставка»?</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Что самое важное для курьера в доставке?',
+                                options: ['Скорость передвижения', 'Сохранение температуры и аккуратность', 'Внешний вид курьера', 'Знание всех улиц'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Улыбка гостя — твоя награда',
+                            content: `<p>Когда гость открывает дверь и получает идеальный заказ — ты даришь ему радость.</p>
+                                <div class="step-highlight">💡 <strong>Личная мотивация:</strong> быть лучшим в своём деле.</div>
+                                <div class="reflection-block"><strong>🤔 Подумай над этим вопросом:</strong></div>
+                                <ul class="step-list">
+                                    <li>Как бы ты хотел, чтобы доставили тебе?</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Почему важно, чтобы заказ был доставлен в целости и сохранности?',
+                                options: ['Чтобы гость не расстроился', 'Чтобы избежать возвратов и сохранить репутацию', 'Чтобы быстрее выполнить план', 'Чтобы получить чаевые'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Температура и санитария',
+                            content: `<ul class="step-list">
+                                    <li><strong>Термосумка</strong> — чистая, плотно закрытая.</li>
+                                    <li><strong>Горячее → горячим, холодное → холодным.</strong></li>
+                                    <li><strong>Аккуратность</strong> — не переворачивай заказы.</li>
+                                    <li><strong>Чистота</strong> — мой сумки после каждой смены.</li>
+                                </ul>
+                                <div class="step-highlight">📋 Проверь прилегание крышек перед выездом.</div>`,
+                            quiz: {
+                                question: 'Почему нужно проверять герметичность термосумки?',
+                                options: ['Для сохранения температуры блюд', 'Чтобы сумка лучше выглядела', 'Чтобы сумка весила меньше', 'Для безопасности курьера'],
+                                correct: 0
+                            }
+                        },
+                        { 
+                            title: 'Проверка перед выездом',
+                            content: `<p>Соблюдай алгоритм:</p>
+                                <ul class="step-list">
+                                    <li>✅ Проверь чистоту и герметичность сумки.</li>
+                                    <li>✅ Убедись, что заказ упакован корректно.</li>
+                                    <li>✅ Соблюдай маршрут — не задерживайся.</li>
+                                </ul>
+                                <div class="step-highlight">⚡ При задержке — предупреди гостя через КЦ.</div>`,
+                            quiz: {
+                                question: 'Что должен сделать курьер при задержке?',
+                                options: ['Проехать быстрее', 'Предупредить гостя через контакт-центр', 'Отменить заказ', 'Не сообщать никому'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Доставка — это сервис',
+                            content: `<p>Будь профессионалом:</p>
+                                <ul class="step-list">
+                                    <li>🔹 Всегда проверяй температуру.</li>
+                                    <li>🔹 Бережно относись к упаковке.</li>
+                                    <li>🔹 Общайся с гостем приветливо.</li>
+                                </ul>
+                                <div class="step-highlight">🌟 Каждый километр — вклад в доверие.</div>`,
+                            quiz: {
+                                question: 'Что помогает курьеру создать впечатление о ресторане?',
+                                options: ['Скорость доставки', 'Приветливость, аккуратность и бережное отношение к заказу', 'Знание всех улиц', 'Яркая форма'],
+                                correct: 1
+                            }
+                        }
+                    ]
+                },
+                manager: {
+                    label: 'Менеджер',
+                    emoji: '📊',
+                    steps: [
+                        { 
+                            title: 'Качество — твой главный KPI',
+                            content: `<p>Ты отвечаешь за процессы и команду. Качество — это результат твоей организации.</p>
+                                <div class="step-highlight">🔥 <strong>Твоя роль:</strong> контролировать все этапы, от кухни до доставки.</div>
+                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div>
+                                <ul class="step-list">
+                                    <li>Как ты оцениваешь качество на каждом участке?</li>
+                                    <li>Какие инструменты контроля у тебя есть?</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Что является главной задачей менеджера в обеспечении качества?',
+                                options: ['Готовить блюда', 'Контролировать все этапы и организовывать процессы', 'Доставлять заказы', 'Вести бухгалтерию'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Репутация и лояльность',
+                            content: `<p>Довольные гости — это рост и стабильность. Ты создаёшь систему, где качество — норма.</p>
+                                <div class="step-highlight">💡 <strong>Личная выгода:</strong> гордость за свою команду и ресторан.</div>`,
+                            quiz: {
+                                question: 'Почему качество влияет на лояльность гостей?',
+                                options: ['Потому что гости платят больше', 'Потому что качество создаёт доверие и желание возвращаться', 'Потому что качество увеличивает скорость работы', 'Потому что качество экономит расходы'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Управление качеством',
+                            content: `<ul class="step-list">
+                                    <li><strong>Стандарты</strong> — СТК, Мотивити.</li>
+                                    <li><strong>Аудит</strong> — проверки всех этапов.</li>
+                                    <li><strong>Жалобы</strong> — системный разбор и устранение причин.</li>
+                                    <li><strong>Пятиминутки</strong> — синхронизация команды.</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Какой инструмент помогает менеджеру системно работать с жалобами?',
+                                options: ['Игнорирование жалоб', 'Разбор каждой жалобы и устранение причин', 'Перекладывание ответственности на курьеров', 'Увеличение скорости доставки'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Организация контроля',
+                            content: `<p>Внедри систему:</p>
+                                <ul class="step-list">
+                                    <li>✅ Чек-листы для каждого участка.</li>
+                                    <li>✅ Разбор жалоб без эмоций, только факты.</li>
+                                    <li>✅ Поощряй сотрудников за замечания и исправления.</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Что должен делать менеджер при выявлении системной ошибки?',
+                                options: ['Наказать виновного', 'Внедрить чек-листы и провести разбор с командой', 'Уволить всех', 'Замолчать проблему'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Культура качества в команде',
+                            content: `<p>Сделай качество приоритетом:</p>
+                                <ul class="step-list">
+                                    <li>🔹 Проводи пятиминутки регулярно.</li>
+                                    <li>🔹 Внедряй систему «Страж качества».</li>
+                                    <li>🔹 Отслеживай динамику и корректируй процессы.</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Как менеджер может укрепить культуру качества в команде?',
+                                options: ['Проводить разборы и поощрять инициативу', 'Увеличивать штрафы', 'Сокращать время на проверки', 'Игнорировать мелкие нарушения'],
+                                correct: 0
+                            }
+                        }
+                    ]
+                },
+                director: {
+                    label: 'Директор',
+                    emoji: '🏢',
+                    steps: [
+                        { 
+                            title: 'Качество — стратегия бизнеса',
+                            content: `<p>Ты формируешь культуру качества во всей сети. Это основа репутации и прибыли.</p>
+                                <div class="step-highlight">🔥 <strong>Твоя задача:</strong> видеть общую картину и создавать условия для качества.</div>`,
+                            quiz: {
+                                question: 'Почему качество является стратегией бизнеса для директора?',
+                                options: ['Потому что это красивое слово', 'Потому что качество определяет репутацию и прибыль', 'Потому что это требование поставщиков', 'Потому что это модно'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Бренд, которому доверяют',
+                            content: `<p>Качество определяет лояльность гостей и устойчивость бизнеса.</p>
+                                <div class="step-highlight">💡 <strong>Личная миссия:</strong> сделать бренд эталоном качества.</div>`,
+                            quiz: {
+                                question: 'Что помогает создать доверие к бренду?',
+                                options: ['Реклама', 'Стабильное качество и соблюдение стандартов', 'Большое количество блюд', 'Низкие цены'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Стратегия качества',
+                            content: `<ul class="step-list">
+                                    <li><strong>Стандарты</strong> — единые для всей сети.</li>
+                                    <li><strong>Обучение</strong> — постоянное развитие команды.</li>
+                                    <li><strong>Обратная связь</strong> — работа с жалобами и улучшениями.</li>
+                                    <li><strong>Мотивация</strong> — поощрение за качество.</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Что должен внедрить директор для системной работы над качеством?',
+                                options: ['Единые стандарты и систему обучения', 'Разовые акции', 'Только контроль цен', 'Увеличение ассортимента'],
+                                correct: 0
+                            }
+                        },
+                        { 
+                            title: 'Управление изменениями',
+                            content: `<p>Внедряй системные улучшения:</p>
+                                <ul class="step-list">
+                                    <li>✅ Анализируй отзывы и показатели.</li>
+                                    <li>✅ Внедряй лучшие практики во все рестораны.</li>
+                                    <li>✅ Личным примером показывай важность качества.</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Как директор может повлиять на качество в сети?',
+                                options: ['Только контролировать финансы', 'Анализировать данные и внедрять лучшие практики', 'Постоянно повышать цены', 'Сокращать штат'],
+                                correct: 1
+                            }
+                        },
+                        { 
+                            title: 'Наследие качества',
+                            content: `<p>Создай систему, которая будет работать без тебя:</p>
+                                <ul class="step-list">
+                                    <li>🔹 Развивай лидеров качества в каждом ресторане.</li>
+                                    <li>🔹 Внедряй стандарты и контролируй их выполнение.</li>
+                                    <li>🔹 Инвестируй в обучение и культуру.</li>
+                                </ul>`,
+                            quiz: {
+                                question: 'Что поможет директору создать устойчивую культуру качества?',
+                                options: ['Развитие лидеров и постоянное обучение', 'Только личный контроль', 'Жесткая дисциплина', 'Экономия на обучении'],
+                                correct: 0
+                            }
+                        }
+                    ]
+                }
+            };
+
+            // ============================
+            // 2. СОСТОЯНИЕ
+            // ============================
+            let currentRole = null;
+            let currentStep = 0;
+            const totalSteps = 6;
+            let points = 0;
+            let stepAnswers = {};
+            let stepChecked = {};
+            let quizAnswers = [];
+
+            // DOM
+            const pageWelcome = document.getElementById('pageWelcome');
+            const pageRoles = document.getElementById('pageRoles');
+            const pageTraining = document.getElementById('pageTraining');
+            const pageFinish = document.getElementById('pageFinish');
+
+            const roleBadge = document.getElementById('roleBadge');
+            const pointsDisplay = document.getElementById('pointsDisplay');
+            const roleGrid = document.getElementById('roleGrid');
+            const trainingRoleTag = document.getElementById('trainingRoleTag');
+            const stepCounter = document.getElementById('stepCounter');
+            const progressTrack = document.getElementById('progressTrack');
+            const stepContainer = document.getElementById('stepContainer');
+            const prevBtn = document.getElementById('prevStepBtn');
+            const nextBtn = document.getElementById('nextStepBtn');
+            const finishBtn = document.getElementById('finishTrainingBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const startBtn = document.getElementById('startBtn');
+            const backToWelcomeBtn = document.getElementById('backToWelcomeBtn');
+            const finishToWelcomeBtn = document.getElementById('finishToWelcomeBtn');
+
+            // ============================
+            // 3. ФУНКЦИИ
+            // ============================
+            function switchPage(pageId) {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(pageId).classList.add('active');
+                document.getElementById('mainContent').scrollTop = 0;
+            }
+
+            function updatePoints() {
+                pointsDisplay.textContent = '⭐ ' + points;
+            }
+
+            function renderProgress() {
+                const steps = progressTrack.querySelectorAll('.progress-step');
+                steps.forEach((el, idx) => {
+                    el.classList.remove('active', 'done');
+                    if (idx < currentStep) el.classList.add('done');
+                    else if (idx === currentStep) el.classList.add('active');
+                });
+            }
+
+            function renderStep() {
+                if (!currentRole) return;
+                const data = trainingData[currentRole];
+                if (!data) return;
+                if (currentStep === 5) {
+                    renderFinalQuiz();
+                    return;
+                }
+                const step = data.steps[currentStep];
+                if (!step) return;
+
+                stepCounter.textContent = (currentStep + 1) + '/' + totalSteps;
+                trainingRoleTag.textContent = data.emoji + ' ' + data.label;
+
+                let html = `<h3 class="step-title">${step.title}</h3>
+                            <div class="step-text">${step.content}</div>`;
+
+                // Добавляем мини-задание, если есть
+                if (step.quiz) {
+                    const q = step.quiz;
+                    const selected = stepAnswers[currentStep] !== undefined ? stepAnswers[currentStep] : -1;
+                    const checked = stepChecked[currentStep] || false;
+                    const isCorrect = (selected === q.correct);
+
+                    html += `<div class="step-quiz" data-step="${currentStep}">
+                        <div class="quiz-question">
+                            <p>${q.question}</p>`;
+                    q.options.forEach((opt, idx) => {
+                        let cls = 'quiz-option';
+                        if (selected === idx && checked) {
+                            cls += (idx === q.correct) ? ' correct' : ' wrong';
+                        }
+                        if (selected === idx) cls += ' selected';
+                        if (checked) cls += ' disabled';
+                        html += `<div class="${cls}" data-opt="${idx}">${opt}</div>`;
+                    });
+                    html += `</div>`;
+                    if (!checked) {
+                        html += `<button class="btn btn-secondary check-step-quiz" style="margin-top:8px; width:auto; padding:8px 20px;">Проверить</button>`;
+                    } else {
+                        html += `<div class="quiz-feedback ${isCorrect ? 'correct' : 'wrong'}">
+                            ${isCorrect ? '✅ Верно! +5 очков' : '❌ Неправильно. Правильный ответ: ' + q.options[q.correct]}
+                        </div>`;
+                    }
+                    html += `</div>`;
+                }
+
+                stepContainer.innerHTML = html;
+
+                // Обработчики для мини-задания
+                if (!stepChecked[currentStep]) {
+                    const container = stepContainer.querySelector('.step-quiz');
+                    if (container) {
+                        const options = container.querySelectorAll('.quiz-option');
+                        let selectedIndex = -1;
+                        options.forEach(el => {
+                            el.addEventListener('click', function() {
+                                if (stepChecked[currentStep]) return;
+                                options.forEach(o => o.classList.remove('selected'));
+                                this.classList.add('selected');
+                                selectedIndex = parseInt(this.dataset.opt);
+                                stepAnswers[currentStep] = selectedIndex;
+                            });
+                        });
+                        const checkBtn = container.querySelector('.check-step-quiz');
+                        if (checkBtn) {
+                            checkBtn.addEventListener('click', function() {
+                                if (stepAnswers[currentStep] === undefined) {
+                                    alert('Выбери вариант ответа');
+                                    return;
+                                }
+                                const correct = step.quiz.correct;
+                                const userAns = stepAnswers[currentStep];
+                                const isCorrect = (userAns === correct);
+                                stepChecked[currentStep] = true;
+                                if (isCorrect) {
+                                    points += 5;
+                                    updatePoints();
+                                }
+                                renderStep();
+                            });
+                        }
+                    }
+                }
+
+                prevBtn.style.display = (currentStep === 0) ? 'none' : 'inline-flex';
+                nextBtn.style.display = 'inline-flex';
+                finishBtn.style.display = 'none';
+                renderProgress();
+            }
+
+            function renderFinalQuiz() {
+                stepCounter.textContent = '6/6';
+                trainingRoleTag.textContent = trainingData[currentRole].emoji + ' ' + trainingData[currentRole].label;
+
+                let html = `<h3 class="step-title">Проверь знания</h3>
+                    <p style="font-size:15px; color:#5a5550; margin-bottom:12px;">Ответь на три вопроса, чтобы завершить обучение.</p>
+                    <div class="quiz-final">`;
+                quizData.forEach((q, idx) => {
+                    html += `<div class="quiz-question" data-q="${idx}">
+                        <p>${idx+1}. ${q.question}</p>`;
+                    q.options.forEach((opt, optIdx) => {
+                        const selected = (quizAnswers[idx] === optIdx) ? 'selected' : '';
+                        const checked = (quizAnswers[idx] !== undefined);
+                        let cls = 'quiz-option ' + selected;
+                        if (checked) cls += ' disabled';
+                        html += `<div class="${cls}" data-q="${idx}" data-opt="${optIdx}">${opt}</div>`;
+                    });
+                    html += `</div>`;
+                });
+                const allAnswered = quizAnswers.every(a => a !== undefined);
+                if (allAnswered) {
+                    html += `<button class="btn btn-success" id="checkFinalQuizBtn" style="margin-top:12px;">✅ Проверить ответы</button>`;
+                } else {
+                    html += `<button class="btn btn-success" id="checkFinalQuizBtn" style="margin-top:12px;" disabled>✅ Проверить ответы</button>`;
+                }
+                html += `</div>`;
+
+                stepContainer.innerHTML = html;
+
+                // Обработчики для выбора вариантов
+                document.querySelectorAll('.quiz-final .quiz-option').forEach(el => {
+                    el.addEventListener('click', function() {
+                        if (this.classList.contains('disabled')) return;
+                        const qIdx = parseInt(this.dataset.q);
+                        const optIdx = parseInt(this.dataset.opt);
+                        const parent = this.closest('.quiz-question');
+                        parent.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+                        this.classList.add('selected');
+                        quizAnswers[qIdx] = optIdx;
+                        const allNow = quizAnswers.every(a => a !== undefined);
+                        const btn = document.getElementById('checkFinalQuizBtn');
+                        btn.disabled = !allNow;
+                    });
+                });
+
+                const checkBtn = document.getElementById('checkFinalQuizBtn');
+                if (checkBtn) {
+                    checkBtn.addEventListener('click', function() {
+                        if (this.disabled) return;
+                        let correctCount = 0;
+                        quizData.forEach((q, idx) => {
+                            const userAns = quizAnswers[idx];
+                            const isCorrect = (userAns === q.correct);
+                            if (isCorrect) correctCount++;
+                            const parent = document.querySelector(`.quiz-final .quiz-question[data-q="${idx}"]`);
+                            parent.querySelectorAll('.quiz-option').forEach(opt => {
+                                const optIdx = parseInt(opt.dataset.opt);
+                                opt.classList.add('disabled');
+                                if (optIdx === q.correct) opt.classList.add('correct');
+                                else if (optIdx === userAns && !isCorrect) opt.classList.add('wrong');
+                            });
+                        });
+                        points += correctCount * 10;
+                        updatePoints();
+                        this.disabled = true;
+                        this.textContent = `✅ Верно ${correctCount} из 3`;
+                        const finishClone = document.getElementById('finishTrainingBtn');
+                        finishClone.style.display = 'inline-flex';
+                        finishClone.textContent = '🏁 Завершить и получить бейдж';
+                    });
+                }
+
+                prevBtn.style.display = 'inline-flex';
+                nextBtn.style.display = 'none';
+                finishBtn.style.display = 'none';
+                renderProgress();
+            }
+
+            function goToStep(index) {
+                if (index < 0) index = 0;
+                if (index >= totalSteps) index = totalSteps - 1;
+                currentStep = index;
+                if (currentStep === 5 && quizAnswers.length === 0) {
+                    quizAnswers = [];
+                }
+                renderStep();
+            }
+
+            function completeTraining() {
+                points += 30;
+                updatePoints();
+                switchPage('pageFinish');
+            }
+
+            function resetAll(goToWelcome) {
+                currentRole = null;
+                currentStep = 0;
+                points = 0;
+                stepAnswers = {};
+                stepChecked = {};
+                quizAnswers = [];
+                updatePoints();
+                roleBadge.textContent = (goToWelcome !== false) ? 'Привет!' : 'Выбор роли';
+                document.querySelectorAll('.progress-step').forEach(el => {
+                    el.classList.remove('done', 'active');
+                });
+                stepContainer.innerHTML = '';
+                finishBtn.style.display = 'none';
+                nextBtn.style.display = 'inline-flex';
+                prevBtn.style.display = 'none';
+                if (goToWelcome !== false) {
+                    switchPage('pageWelcome');
+                } else {
+                    switchPage('pageRoles');
+                }
+            }
+
+            function selectRole(role) {
+                if (!trainingData[role]) return;
+                currentRole = role;
+                currentStep = 0;
+                stepAnswers = {};
+                stepChecked = {};
+                quizAnswers = [];
+                points += 10;
+                updatePoints();
+                const label = trainingData[role].label;
+                roleBadge.textContent = trainingData[role].emoji + ' ' + label;
+                switchPage('pageTraining');
+                renderStep();
+            }
+
+            // ============================
+            // 4. ОБРАБОТЧИКИ
+            // ============================
+            startBtn.addEventListener('click', () => resetAll(false));
+            backToWelcomeBtn.addEventListener('click', () => resetAll(true));
+            finishToWelcomeBtn.addEventListener('click', () => resetAll(true));
+
+            roleGrid.addEventListener('click', function(e) {
+                const card = e.target.closest('.role-item');
+                if (!card) return;
+                const role = card.dataset.role;
+                if (role) selectRole(role);
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentStep > 0) goToStep(currentStep - 1);
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentStep < 5) {
+                    const step = trainingData[currentRole].steps[currentStep];
+                    if (step.quiz && !stepChecked[currentStep]) {
+                        alert('Сначала выполни задание в этом шаге!');
+                        return;
+                    }
+                }
+                if (currentStep < totalSteps - 1) {
+                    points += 5;
+                    updatePoints();
+                    goToStep(currentStep + 1);
+                }
+            });
+
+            finishBtn.addEventListener('click', completeTraining);
+            resetBtn.addEventListener('click', () => resetAll(true));
+
+            // ============================
+            // 5. ИНИЦИАЛИЗАЦИЯ
+            // ============================
+            switchPage('pageWelcome');
+            prevBtn.style.display = 'none';
+            updatePoints();
+        })();
+    </script>
+</body>
+</html>
