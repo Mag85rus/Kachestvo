@@ -429,7 +429,7 @@
 
                     <!-- Блок выбора языка -->
                     <div class="lang-selector">
-                        <p id="langPrompt">Выберите язык для обучения / Choose training language</p>
+                        <p id="langPrompt">Выберите язык для обучения</p>
                         <div class="lang-options" id="langOptions">
                             <button class="lang-btn" data-lang="ru"><span class="flag">🇷🇺</span> Русский</button>
                             <button class="lang-btn" data-lang="ky"><span class="flag">🇰🇬</span> Кыргызча</button>
@@ -547,6 +547,8 @@
                     finishNext3: '✔ Следи за качеством вместе с командой',
                     resetBtn: '🔄 Пройти заново',
                     finishToWelcome: '🏠 На главную',
+                    checkBtn: 'Проверить',
+                    finalCheckBtn: '✅ Проверить ответы',
                     roles: {
                         povar: 'Повар',
                         shef: 'Шеф-повар',
@@ -680,6 +682,8 @@
                     finishNext3: '✔ Команда менен бирге сапатты көзөмөлдө',
                     resetBtn: '🔄 Кайрадан өтүү',
                     finishToWelcome: '🏠 Башкы бетке',
+                    checkBtn: 'Текшерүү',
+                    finalCheckBtn: '✅ Жоопторду текшерүү',
                     roles: { povar: 'Ашпоз', shef: 'Шеф-ашпоз', sbor: 'Терүүчү', kurier: 'Курьер', manager: 'Менеджер', director: 'Директор' },
                     steps: {
                         povar: [
@@ -806,6 +810,8 @@
                     finishNext3: '✔ Jamoa bilan birga sifatni kuzatib boring',
                     resetBtn: '🔄 Qayta o‘tish',
                     finishToWelcome: '🏠 Bosh sahifaga',
+                    checkBtn: 'Tekshirish',
+                    finalCheckBtn: '✅ Javoblarni tekshirish',
                     roles: { povar: 'Oshpaz', shef: 'Bosh oshpaz', sbor: 'Yig‘uvchi', kurier: 'Kuryer', manager: 'Menejer', director: 'Direktor' },
                     steps: {
                         povar: [
@@ -932,6 +938,8 @@
                     finishNext3: '✔ Сифатро бо даста назорат кунед',
                     resetBtn: '🔄 Аз нав гузаштан',
                     finishToWelcome: '🏠 Ба саҳифаи асосӣ',
+                    checkBtn: 'Санҷиш',
+                    finalCheckBtn: '✅ Ҷавобҳоро санҷиш',
                     roles: { povar: 'Ошпаз', shef: 'Ошпази сар', sbor: 'Ҷамъкунанда', kurier: 'Курьер', manager: 'Менеҷер', director: 'Директор' },
                     steps: {
                         povar: [
@@ -1058,6 +1066,8 @@
                     finishNext3: '✔ Monitor quality together with the team',
                     resetBtn: '🔄 Start over',
                     finishToWelcome: '🏠 Back to main',
+                    checkBtn: 'Check',
+                    finalCheckBtn: '✅ Check answers',
                     roles: { povar: 'Cook', shef: 'Chef', sbor: 'Assembler', kurier: 'Courier', manager: 'Manager', director: 'Director' },
                     steps: {
                         povar: [
@@ -1158,7 +1168,7 @@
             // ============================
             // 1. СОСТОЯНИЕ
             // ============================
-            let currentLang = localStorage.getItem('academyLang') || 'ru'; // по умолчанию русский
+            let currentLang = localStorage.getItem('academyLang') || 'ru';
             let currentRole = null;
             let currentStep = 0;
             const totalSteps = 6;
@@ -1191,7 +1201,6 @@
             const langOptions = document.getElementById('langOptions');
             const langPrompt = document.getElementById('langPrompt');
 
-            // Элементы с текстами
             const welcomeTitle = document.getElementById('welcomeTitle');
             const welcomeSub = document.getElementById('welcomeSub');
             const tag1 = document.getElementById('tag1');
@@ -1234,9 +1243,7 @@
                 const lang = getLang();
                 const data = LANG_DATA[lang];
                 if (!data) return;
-                // Заголовок
                 appTitle.textContent = data.appTitle;
-                // Приветствие
                 welcomeTitle.innerHTML = data.welcomeTitle;
                 welcomeSub.textContent = data.welcomeSub;
                 tag1.textContent = data.tag1;
@@ -1248,17 +1255,14 @@
                 startBtn.textContent = data.startBtn;
                 welcomeDuration.textContent = data.welcomeDuration;
                 langPrompt.textContent = data.langPrompt;
-                // Роли
                 roleTitle.textContent = data.roleTitle;
                 roleSub.textContent = data.roleSub;
                 roleFooter.textContent = data.roleFooter;
                 backToWelcomeBtn.textContent = data.backToWelcome;
                 stepCounterLabel.textContent = data.stepCounterLabel + ' ';
-                // Кнопки
                 prevBtn.textContent = data.prevBtn;
                 nextBtn.textContent = data.nextBtn;
                 finishBtn.textContent = data.finishBtn;
-                // Финиш
                 finishTitle.textContent = data.finishTitle;
                 finishBadge.textContent = data.finishBadge;
                 finishDesc.textContent = data.finishDesc;
@@ -1269,26 +1273,20 @@
                 resetBtn.textContent = data.resetBtn;
                 finishToWelcomeBtn.textContent = data.finishToWelcome;
 
-                // Обновить названия ролей
                 document.querySelectorAll('[data-role-label]').forEach(el => {
                     const roleKey = el.dataset.roleLabel;
                     if (data.roles[roleKey]) el.textContent = data.roles[roleKey];
                 });
 
-                // Подсветить выбранный язык
                 document.querySelectorAll('.lang-btn').forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.lang === lang);
                 });
 
-                // Если уже на тренировке — перерисовать
                 if (pageTraining.classList.contains('active') && currentRole) {
                     renderStep();
                 }
             }
 
-            // ============================
-            // 2. ФУНКЦИИ
-            // ============================
             function switchPage(pageId) {
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 document.getElementById(pageId).classList.add('active');
@@ -1355,7 +1353,8 @@
                     });
                     html += `</div>`;
                     if (!checked) {
-                        html += `<button class="btn btn-secondary check-step-quiz" style="margin-top:8px; width:auto; padding:8px 20px;">${data.stepQuizzes?.[currentRole]?.[currentStep] ? 'Проверить' : 'Check'}</button>`;
+                        // Используем переведённую кнопку
+                        html += `<button class="btn btn-secondary check-step-quiz" style="margin-top:8px; width:auto; padding:8px 20px;">${data.checkBtn || 'Проверить'}</button>`;
                     } else {
                         const correctText = data.stepQuizzes?.[currentRole]?.[currentStep]?.options?.[quiz.correct] || quiz.options[quiz.correct];
                         html += `<div class="quiz-feedback ${isCorrect ? 'correct' : 'wrong'}">
@@ -1550,16 +1549,12 @@
 
             function init() {
                 applyLanguage();
-                // По умолчанию всегда показываем приветствие
                 switchPage('pageWelcome');
                 prevBtn.style.display = 'none';
                 updatePoints();
             }
 
-            // ============================
-            // 3. ОБРАБОТЧИКИ
-            // ============================
-            // Выбор языка
+            // Обработчики событий
             langOptions.addEventListener('click', function(e) {
                 const btn = e.target.closest('.lang-btn');
                 if (!btn) return;
@@ -1568,7 +1563,6 @@
                     currentLang = lang;
                     localStorage.setItem('academyLang', lang);
                     applyLanguage();
-                    // Если обучение уже идёт, перерисовать текущий шаг
                     if (pageTraining.classList.contains('active') && currentRole) {
                         renderStep();
                     }
@@ -1608,10 +1602,6 @@
             finishBtn.addEventListener('click', completeTraining);
             resetBtn.addEventListener('click', () => resetAll(true));
 
-            // ============================
-            // 4. ИНИЦИАЛИЗАЦИЯ
-            // ============================
-            // Набор ролей для эмодзи (используется в рендере)
             const trainingData = {
                 povar: { emoji: '👨‍🍳' },
                 shef: { emoji: '🧑‍🍳' },
