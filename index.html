@@ -180,6 +180,28 @@
         .role-item .emoji { font-size: 34px; display: block; margin-bottom: 6px; }
         .role-item .label { font-weight: 600; font-size: 15px; color: #2d2a27; }
 
+        .lang-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin: 12px 0 16px;
+        }
+        .lang-item {
+            background: rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.04);
+            border-radius: 20px;
+            padding: 14px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-weight: 600;
+            font-size: 16px;
+            color: #2d2a27;
+        }
+        .lang-item:hover { background: rgba(0,0,0,0.04); }
+        .lang-item:active { transform: scale(0.96); }
+        .lang-item .emoji { font-size: 28px; display: block; margin-bottom: 4px; }
+
         .progress-track {
             display: flex;
             gap: 6px;
@@ -289,15 +311,13 @@
             padding-top: 16px;
             border-top: 1px solid rgba(0,0,0,0.05);
         }
-        .step-quiz .quiz-question {
-            margin-bottom: 10px;
-        }
         .step-quiz .quiz-question p {
             font-weight: 600;
             margin-bottom: 6px;
             color: #2d2a27;
         }
-        .step-quiz .quiz-option {
+        .step-quiz .quiz-option,
+        .quiz-final .quiz-option {
             display: block;
             background: rgba(0,0,0,0.02);
             border: 1px solid rgba(0,0,0,0.04);
@@ -309,20 +329,25 @@
             font-size: 14px;
             color: #3d3834;
         }
-        .step-quiz .quiz-option:hover { background: rgba(0,0,0,0.04); }
-        .step-quiz .quiz-option.selected {
+        .step-quiz .quiz-option:hover,
+        .quiz-final .quiz-option:hover { background: rgba(0,0,0,0.04); }
+        .step-quiz .quiz-option.selected,
+        .quiz-final .quiz-option.selected {
             background: rgba(212,181,160,0.2);
             border-color: #d4b5a0;
         }
-        .step-quiz .quiz-option.correct {
+        .step-quiz .quiz-option.correct,
+        .quiz-final .quiz-option.correct {
             background: rgba(107,143,122,0.15);
             border-color: #6b8f7a;
         }
-        .step-quiz .quiz-option.wrong {
+        .step-quiz .quiz-option.wrong,
+        .quiz-final .quiz-option.wrong {
             background: rgba(200,100,100,0.12);
             border-color: #c96868;
         }
-        .step-quiz .quiz-option.disabled {
+        .step-quiz .quiz-option.disabled,
+        .quiz-final .quiz-option.disabled {
             pointer-events: none;
             opacity: 0.7;
         }
@@ -333,36 +358,6 @@
         }
         .step-quiz .quiz-feedback.correct { color: #3a5a4a; }
         .step-quiz .quiz-feedback.wrong { color: #b85a5a; }
-
-        .quiz-final .quiz-option {
-            display: block;
-            background: rgba(0,0,0,0.02);
-            border: 1px solid rgba(0,0,0,0.04);
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-bottom: 6px;
-            cursor: pointer;
-            transition: all 0.1s;
-            font-size: 14px;
-            color: #3d3834;
-        }
-        .quiz-final .quiz-option:hover { background: rgba(0,0,0,0.04); }
-        .quiz-final .quiz-option.selected {
-            background: rgba(212,181,160,0.2);
-            border-color: #d4b5a0;
-        }
-        .quiz-final .quiz-option.correct {
-            background: rgba(107,143,122,0.15);
-            border-color: #6b8f7a;
-        }
-        .quiz-final .quiz-option.wrong {
-            background: rgba(200,100,100,0.12);
-            border-color: #c96868;
-        }
-        .quiz-final .quiz-option.disabled {
-            pointer-events: none;
-            opacity: 0.7;
-        }
 
         @media (max-width: 460px) {
             .app { border-radius: 0; height: 100vh; max-height: 100vh; }
@@ -377,6 +372,8 @@
             .welcome-feature { font-size: 11px; padding: 8px 2px; }
             .welcome-feature .icon { font-size: 22px; }
             .step-title { font-size: 20px; }
+            .lang-grid { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+            .lang-item { padding: 10px 4px; font-size: 14px; }
         }
         @media (min-width: 600px) {
             .app { max-width: 560px; }
@@ -386,7 +383,7 @@
 <body>
     <div class="app" id="app">
         <header class="app-header">
-            <h1>🍽️ Академия</h1>
+            <h1 id="appTitle">🍽️ Академия</h1>
             <div>
                 <span class="badge-role" id="roleBadge">Привет!</span>
                 <span class="points-badge" id="pointsDisplay" style="margin-left:8px;">⭐ 0</span>
@@ -394,42 +391,58 @@
         </header>
 
         <div class="main-content" id="mainContent">
+            <!-- ВЫБОР ЯЗЫКА -->
+            <div class="page" id="pageLang">
+                <div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:20px 0;">
+                    <span class="welcome-logo">🌐</span>
+                    <h1 class="welcome-title" id="langTitle">Выберите язык</h1>
+                    <p class="welcome-sub" id="langSub">Обучение будет проходить на выбранном языке</p>
+                    <div class="lang-grid" id="langGrid">
+                        <div class="lang-item" data-lang="ru"><span class="emoji">🇷🇺</span>Русский</div>
+                        <div class="lang-item" data-lang="ky"><span class="emoji">🇰🇬</span>Кыргызча</div>
+                        <div class="lang-item" data-lang="uz"><span class="emoji">🇺🇿</span>O‘zbekcha</div>
+                        <div class="lang-item" data-lang="tg"><span class="emoji">🇹🇯</span>Тоҷикӣ</div>
+                        <div class="lang-item" data-lang="en"><span class="emoji">🇬🇧</span>English</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- ЗАСТАВКА -->
-            <div class="page active" id="pageWelcome">
+            <div class="page" id="pageWelcome">
                 <div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:20px 0;">
                     <span class="welcome-logo">🧑‍🍳</span>
-                    <h1 class="welcome-title">Академия<br><span>качества</span></h1>
-                    <p class="welcome-sub">Микрообучение для команды ресторанов доставки</p>
+                    <h1 class="welcome-title" id="welcomeTitle">Академия<br><span>качества</span></h1>
+                    <p class="welcome-sub" id="welcomeSub">Микрообучение для команды ресторанов доставки</p>
                     <div class="welcome-tags">
-                        <span>#качество</span>
-                        <span>#команда</span>
-                        <span>#гость</span>
+                        <span id="tag1">#качество</span>
+                        <span id="tag2">#команда</span>
+                        <span id="tag3">#гость</span>
                     </div>
                     <div class="welcome-features">
-                        <div class="welcome-feature"><span class="icon">🎯</span>6 шагов</div>
-                        <div class="welcome-feature"><span class="icon">⭐</span>Бейджи</div>
-                        <div class="welcome-feature"><span class="icon">📚</span>По ролям</div>
+                        <div class="welcome-feature" id="feat1"><span class="icon">🎯</span>6 шагов</div>
+                        <div class="welcome-feature" id="feat2"><span class="icon">⭐</span>Бейджи</div>
+                        <div class="welcome-feature" id="feat3"><span class="icon">📚</span>По ролям</div>
                     </div>
                     <button class="btn btn-primary" id="startBtn" style="margin-top:16px;">🚀 Начать обучение</button>
-                    <div style="margin-top:12px; font-size:13px; color:#9e928a; text-align:center;">~ 7 минут · для всех должностей</div>
+                    <div style="margin-top:12px; font-size:13px; color:#9e928a; text-align:center;" id="welcomeDuration">~ 7 минут · для всех должностей</div>
                 </div>
             </div>
 
             <!-- ВЫБОР РОЛИ -->
             <div class="page" id="pageRoles">
                 <div>
-                    <h2 class="step-title">Кто ты в команде?</h2>
-                    <p style="font-size:15px; color:#5a5550; margin-top:4px;">Выбери свою роль, чтобы начать обучение. Каждый модуль адаптирован под твои задачи.</p>
+                    <h2 class="step-title" id="roleTitle">Кто ты в команде?</h2>
+                    <p style="font-size:15px; color:#5a5550; margin-top:4px;" id="roleSub">Выбери свою роль, чтобы начать обучение. Каждый модуль адаптирован под твои задачи.</p>
                 </div>
                 <div class="role-grid" id="roleGrid">
-                    <div class="role-item" data-role="povar"><span class="emoji">👨‍🍳</span><span class="label">Повар</span></div>
-                    <div class="role-item" data-role="shef"><span class="emoji">🧑‍🍳</span><span class="label">Шеф-повар</span></div>
-                    <div class="role-item" data-role="sbor"><span class="emoji">📦</span><span class="label">Сборщик</span></div>
-                    <div class="role-item" data-role="kurier"><span class="emoji">🛵</span><span class="label">Курьер</span></div>
-                    <div class="role-item" data-role="manager"><span class="emoji">📊</span><span class="label">Менеджер</span></div>
-                    <div class="role-item" data-role="director"><span class="emoji">🏢</span><span class="label">Директор</span></div>
+                    <div class="role-item" data-role="povar"><span class="emoji">👨‍🍳</span><span class="label" data-role-label="povar">Повар</span></div>
+                    <div class="role-item" data-role="shef"><span class="emoji">🧑‍🍳</span><span class="label" data-role-label="shef">Шеф-повар</span></div>
+                    <div class="role-item" data-role="sbor"><span class="emoji">📦</span><span class="label" data-role-label="sbor">Сборщик</span></div>
+                    <div class="role-item" data-role="kurier"><span class="emoji">🛵</span><span class="label" data-role-label="kurier">Курьер</span></div>
+                    <div class="role-item" data-role="manager"><span class="emoji">📊</span><span class="label" data-role-label="manager">Менеджер</span></div>
+                    <div class="role-item" data-role="director"><span class="emoji">🏢</span><span class="label" data-role-label="director">Директор</span></div>
                 </div>
-                <div style="margin-top:8px; font-size:13px; color:#9e928a; text-align:center;">Обучение построено на принципах качества и командной ответственности</div>
+                <div style="margin-top:8px; font-size:13px; color:#9e928a; text-align:center;" id="roleFooter">Обучение построено на принципах качества и командной ответственности</div>
                 <button class="btn btn-secondary" id="backToWelcomeBtn" style="margin-top:12px;">← На главную</button>
             </div>
 
@@ -437,7 +450,7 @@
             <div class="page" id="pageTraining">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                     <span class="role-tag" id="trainingRoleTag">Повар</span>
-                    <span style="font-size:14px; font-weight:500; color:#5a5550;">Шаг <span id="stepCounter">1</span>/6</span>
+                    <span style="font-size:14px; font-weight:500; color:#5a5550;" id="stepCounterLabel">Шаг <span id="stepCounter">1</span>/6</span>
                 </div>
                 <div class="progress-track" id="progressTrack">
                     <span class="progress-step" data-step="1"></span>
@@ -459,17 +472,17 @@
             <div class="page" id="pageFinish">
                 <div style="text-align:center; padding:20px 0;">
                     <div style="font-size:64px; margin-bottom:12px;">🏆</div>
-                    <h2 class="step-title">Ты — Страж Качества!</h2>
+                    <h2 class="step-title" id="finishTitle">Ты — Страж Качества!</h2>
                     <div class="badge-earned" style="margin:16px 0; justify-content:center;">
-                        <span class="icon">⭐</span> Бейдж «Мастер качества»
+                        <span class="icon">⭐</span> <span id="finishBadge">Бейдж «Мастер качества»</span>
                     </div>
-                    <p style="font-size:15px; color:#5a5550; margin:12px 0;">Ты прошёл обучение по стандартам качества для своей роли. Каждый день — вклад в довольного гостя.</p>
+                    <p style="font-size:15px; color:#5a5550; margin:12px 0;" id="finishDesc">Ты прошёл обучение по стандартам качества для своей роли. Каждый день — вклад в довольного гостя.</p>
                     <div style="background:rgba(0,0,0,0.02); border-radius:20px; padding:16px; margin:12px 0; text-align:left;">
-                        <div style="font-weight:600; margin-bottom:6px;">📌 Что дальше?</div>
+                        <div style="font-weight:600; margin-bottom:6px;" id="finishNextTitle">📌 Что дальше?</div>
                         <ul style="list-style:none; padding:0; font-size:14px; color:#3d3834; line-height:1.7;">
-                            <li>✔ Применяй знания на каждой смене</li>
-                            <li>✔ Участвуй в пятиминутках и делись опытом</li>
-                            <li>✔ Следи за качеством вместе с командой</li>
+                            <li id="finishNext1">✔ Применяй знания на каждой смене</li>
+                            <li id="finishNext2">✔ Участвуй в пятиминутках и делись опытом</li>
+                            <li id="finishNext3">✔ Следи за качеством вместе с командой</li>
                         </ul>
                     </div>
                     <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
@@ -484,500 +497,663 @@
     <script>
         (function() {
             // ============================
-            // 1. ОБНОВЛЁННЫЕ ДАННЫЕ С УЧЁТОМ ПРАВОК
+            // 0. ПЕРЕВОДЫ
             // ============================
-            const quizData = [
-                {
-                    question: 'Что важнее всего при приготовлении блюда?',
-                    options: ['Скорость приготовления', 'Качество ингредиентов и соблюдение СТК', 'Количество порций', 'Яркая подача'],
-                    correct: 1
+            const LANG_DATA = {
+                ru: {
+                    name: 'Русский',
+                    appTitle: '🍽️ Академия',
+                    langTitle: 'Выберите язык',
+                    langSub: 'Обучение будет проходить на выбранном языке',
+                    welcomeTitle: 'Академия<br><span>качества</span>',
+                    welcomeSub: 'Микрообучение для команды ресторанов доставки',
+                    tag1: '#качество',
+                    tag2: '#команда',
+                    tag3: '#гость',
+                    feat1: '🎯6 шагов',
+                    feat2: '⭐Бейджи',
+                    feat3: '📚По ролям',
+                    startBtn: '🚀 Начать обучение',
+                    welcomeDuration: '~ 7 минут · для всех должностей',
+                    roleTitle: 'Кто ты в команде?',
+                    roleSub: 'Выбери свою роль, чтобы начать обучение. Каждый модуль адаптирован под твои задачи.',
+                    roleFooter: 'Обучение построено на принципах качества и командной ответственности',
+                    backToWelcome: '← На главную',
+                    stepCounterLabel: 'Шаг',
+                    prevBtn: '← Назад',
+                    nextBtn: 'Далее →',
+                    finishBtn: '🏁 Завершить и получить бейдж',
+                    finishTitle: 'Ты — Страж Качества!',
+                    finishBadge: 'Бейдж «Мастер качества»',
+                    finishDesc: 'Ты прошёл обучение по стандартам качества для своей роли. Каждый день — вклад в довольного гостя.',
+                    finishNextTitle: '📌 Что дальше?',
+                    finishNext1: '✔ Применяй знания на каждой смене',
+                    finishNext2: '✔ Участвуй в пятиминутках и делись опытом',
+                    finishNext3: '✔ Следи за качеством вместе с командой',
+                    resetBtn: '🔄 Пройти заново',
+                    finishToWelcome: '🏠 На главную',
+                    roles: {
+                        povar: 'Повар',
+                        shef: 'Шеф-повар',
+                        sbor: 'Сборщик',
+                        kurier: 'Курьер',
+                        manager: 'Менеджер',
+                        director: 'Директор'
+                    },
+                    // Шаги для каждой роли (только заголовки и контент)
+                    steps: {
+                        povar: [
+                            { title: 'Качество — твоя подпись', content: `<p>Каждое блюдо — это лицо ресторана. Гость чувствует вкус, текстуру и температуру.</p><div class="step-highlight">🔥 <strong>Твоя задача:</strong> готовить точно по СТК, соблюдать рецептуру и контролировать внешний вид.</div><div class="reflection-block"><strong>🤔 Подумай над этими вопросами и ответь себе сам:</strong></div><ul class="step-list"><li>Почему качество ингредиентов влияет на вкус?</li><li>Как температура приготовления сохраняет текстуру?</li><li>Что значит «презентабельность» блюда?</li></ul>` },
+                            { title: 'Гость выбирает нас за вкус', content: `<p>Когда ты вкладываешь душу в блюдо, гость это чувствует. Твоя работа — главная причина, почему люди возвращаются.</p><div class="step-highlight">💡 <strong>Личная выгода:</strong> гордость за своё дело, меньше возвратов, больше благодарностей.</div><div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div><ul class="step-list"><li>Представь, что это блюдо для твоей семьи.</li><li>Какой комплимент ты хотел бы услышать?</li></ul>` },
+                            { title: 'Стандарты и инструменты', content: `<p>Ты должен знать:</p><ul class="step-list"><li><strong>СТК</strong> — технологические карты на каждое блюдо.</li><li><strong>Дегустации</strong> — 2 раза в неделю сверяем вкус и внешний вид.</li><li><strong>Контроль веса</strong> — каждое блюдо взвешивается.</li><li><strong>Температурный режим</strong> — горячее должно быть горячим.</li></ul><div class="step-highlight">📚 Все стандарты в Мотивити (СТК).</div>` },
+                            { title: 'Практика — проверка качества', content: `<p>Теперь ты готов применить знания:</p><ul class="step-list"><li>✅ Проверь вес порции — отклонение недопустимо.</li><li>✅ Оцени внешний вид — аккуратность и наличие всех ингредиентов.</li><li>✅ Убедись, что используется верная упаковка.</li></ul><div class="step-highlight">⚡ <strong>Совет:</strong> перед подачей всегда проверяй блюдо глазами гостя.</div>` },
+                            { title: 'Каждый день — шаг к совершенству', content: `<p>Качество — это привычка. Внедряй в свою смену:</p><ul class="step-list"><li>Участвуй в <strong>пятиминутках</strong> — обсуждай ошибки и успехи.</li><li>Не бойся переделывать, если заметил или заметили нарушение.</li><li>Делитесь опытом с коллегами.</li></ul><div class="step-highlight">🌟 Помни: довольный гость — результат твоей работы.</div>` }
+                        ],
+                        shef: [
+                            { title: 'Ты — лидер качества на кухне', content: `<p>Ты отвечаешь за стандарты всей кухни. Качество каждого блюда — зона твоей ответственности.</p><div class="step-highlight">🔥 <strong>Твоя миссия:</strong> контролировать процессы, обучать команду и быть примером.</div><div class="reflection-block"><strong>🤔 Подумай над этими вопросами и ответь себе сам:</strong></div><ul class="step-list"><li>Как ты оцениваешь работу поваров?</li><li>Какие инструменты контроля ты используешь?</li></ul>` },
+                            { title: 'Репутация и доверие', content: `<p>Твоё имя связывают с качеством. Гости доверяют бренду, потому что ты гарантируешь вкус.</p><div class="step-highlight">💡 <strong>Личная мотивация:</strong> гордиться каждым блюдом, выходящим с кухни.</div><div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div><ul class="step-list"><li>Как ты вдохновляешь команду на качество?</li><li>Что для тебя значит «идеальный заказ»?</li></ul>` },
+                            { title: 'Управление качеством', content: `<p>Ты должен владеть:</p><ul class="step-list"><li><strong>СТК</strong> — контроль исполнения.</li><li><strong>Дегустации</strong> — лично пробуй и сравнивай с эталоном.</li><li><strong>Санитария</strong> — чистота кухни и оборудования.</li><li><strong>Температура</strong> — от холодильника до термосумки.</li></ul><div class="step-highlight">📋 Используй чек-листы контроля на каждой смене.</div>` },
+                            { title: 'Наставничество и аудит', content: `<p>Проведи аудит своей кухни:</p><ul class="step-list"><li>✅ Проверь соблюдение СТК у каждого повара.</li><li>✅ Организуй дегустацию и обсуди результаты.</li><li>✅ Убедись, что весы и термометры работают корректно.</li></ul><div class="step-highlight">📢 Обучай команду — делитесь стандартами и фиксируйте ошибки.</div>` },
+                            { title: 'Культура качества', content: `<p>Создай систему, где качество — норма жизни:</p><ul class="step-list"><li>Ежедневные пятиминутки с разбором.</li><li>Поощряй тех, кто замечает и исправляет нарушения.</li><li>Внедряй «золотые стандарты» на кухне.</li></ul><div class="step-highlight">🌟 Ты — главный хранитель качества. От тебя зависит репутация.</div>` }
+                        ],
+                        sbor: [
+                            { title: 'Сборка — последний штрих', content: `<p>Ты формируешь заказ, который увидит гость. От твоей аккуратности зависит первое впечатление.</p><div class="step-highlight">🔥 <strong>Твоя задача:</strong> полная комплектация, внешний вид и сохранение температуры.</div><div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div><ul class="step-list"><li>Почему важно проверять каждую позицию?</li><li>Как упаковка влияет на восприятие блюда?</li></ul>` },
+                            { title: 'Гордость за каждую комплектовку заказа.', content: `<p>Когда гость открывает заказ и видит идеальную сборку — это твоя заслуга.</p><div class="step-highlight">💡 <strong>Личная выгода:</strong> минимум жалоб, максимум благодарностей.</div><div class="reflection-block"><strong>🤔 Подумай над этим вопросом:</strong></div><ul class="step-list"><li>Представь, что заказ едет тебе. Что бы ты хотел увидеть?</li></ul>` },
+                            { title: 'Чек-лист сборщика', content: `<ul class="step-list"><li><strong>Внешний вид</strong> — аккуратность, наличие всех ингредиентов.</li><li><strong>Разделение</strong> — горячее и холодное разделено Гостевым боксом.</li><li><strong>Упаковка</strong> — правильный контейнер, герметично закрыт.</li><li><strong>Вес</strong> — есть сомнения, перепроверь, сверь с нормой.</li><li><strong>Наличие</strong> — все позиции по бланку.</li></ul><div class="step-highlight">📋 Проверь себя дважды перед отправкой.</div>` },
+                            { title: 'Контроль качества на линии', content: `<p>Практический этап:</p><ul class="step-list"><li>✅ Сверь заказ с бланком и стикерами.</li><li>✅ Убедись, что нет инородных предметов.</li><li>✅ Проверь целостность упаковки.</li><li>✅ Раздели горячее и холодное.</li></ul><div class="step-highlight">⚡ Нашёл нарушение — останови процесс и исправь.</div>` },
+                            { title: 'Каждая секунда — качество', content: `<p>Сделай контроль частью своей рутины:</p><ul class="step-list"><li>Участвуй в пятиминутках.</li><li>Если сомневаешься — перепроверь.</li><li>Говори о нарушениях открыто.</li></ul><div class="step-highlight">🌟 Твоя сборка — это лицо ресторана для гостя.</div>` }
+                        ],
+                        kurier: [
+                            { title: 'Ты — финальная миля качества', content: `<p>Гость ждёт заказ, а ты — его связь с рестораном. Температура и аккуратность в твоих руках.</p><div class="step-highlight">🔥 <strong>Твоя задача:</strong> доставить блюдо горячим, целым и в срок.</div><div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div><ul class="step-list"><li>Как температура влияет на вкус?</li><li>Что значит «бережная доставка»?</li></ul>` },
+                            { title: 'Улыбка гостя — твоя награда', content: `<p>Когда гость открывает дверь и получает идеальный заказ — ты даришь ему радость.</p><div class="step-highlight">💡 <strong>Личная мотивация:</strong> быть лучшим в своём деле.</div><div class="reflection-block"><strong>🤔 Подумай над этим вопросом:</strong></div><ul class="step-list"><li>Как бы ты хотел, чтобы доставили тебе?</li></ul>` },
+                            { title: 'Температура и санитария', content: `<ul class="step-list"><li><strong>Термосумка</strong> — чистая, плотно закрытая.</li><li><strong>Горячее → горячим, холодное → холодным.</strong></li><li><strong>Аккуратность</strong> — не переворачивай заказы.</li><li><strong>Чистота</strong> — мой сумки после каждой смены.</li></ul><div class="step-highlight">📋 Проверь термосумку (хладогены, пицца с нагревателем) перед выездом.</div>` },
+                            { title: 'Проверка перед выездом', content: `<p>Соблюдай алгоритм:</p><ul class="step-list"><li>✅ Проверь чистоту и герметичность сумки.</li><li>✅ Убедись, что заказ упакован корректно.</li><li>✅ Соблюдай маршрут — не задерживайся.</li></ul><div class="step-highlight">⚡ При задержке — предупреди гостя через КЦ.</div>` },
+                            { title: 'Доставка — это сервис', content: `<p>Будь профессионалом:</p><ul class="step-list"><li>Всегда проверяй термосумку.</li><li>Бережно относись к заказу Гостя.</li><li>Общайся с гостем приветливо.</li></ul><div class="step-highlight">🌟 Каждый километр — вклад в доверие.</div>` }
+                        ],
+                        manager: [
+                            { title: 'Качество — твой главный KPI', content: `<p>Ты отвечаешь за процессы и команду. Качество — это результат твоей организации.</p><div class="step-highlight">🔥 <strong>Твоя роль:</strong> контролировать все этапы, от кухни до доставки.</div><div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div><ul class="step-list"><li>Как ты оцениваешь качество на каждом участке?</li><li>Какие инструменты контроля у тебя есть?</li></ul>` },
+                            { title: 'Репутация и лояльность', content: `<p>Довольные гости — это рост и стабильность. Ты создаёшь систему, где качество — норма.</p><div class="step-highlight">💡 <strong>Личная выгода:</strong> гордость за свою команду и ресторан.</div>` },
+                            { title: 'Управление качеством', content: `<ul class="step-list"><li><strong>Стандарты</strong> — Мотивити, Обои.</li><li><strong>Аудит</strong> — проверки всех этапов.</li><li><strong>Жалобы</strong> — системный разбор и устранение причин.</li><li><strong>Пятиминутки</strong> — синхронизация команды.</li></ul>` },
+                            { title: 'Организация контроля', content: `<p>Используй в работе:</p><ul class="step-list"><li>✅ Чек-листы.</li><li>✅ Разбор жалоб без эмоций, только факты.</li><li>✅ Поощряй сотрудников за замечания и исправления.</li></ul>` },
+                            { title: 'Культура качества в команде', content: `<p>Сделай качество приоритетом:</p><ul class="step-list"><li>Проводи пятиминутки регулярно.</li><li>Внедряй систему «Страж качества».</li><li>Отслеживай динамику и корректируй процессы.</li></ul>` }
+                        ],
+                        director: [
+                            { title: 'Качество — стратегия бизнеса', content: `<p>Ты формируешь культуру качества во всей сети. Это основа репутации и прибыли.</p><div class="step-highlight">🔥 <strong>Твоя задача:</strong> видеть общую картину и создавать условия для качества.</div>` },
+                            { title: 'Бренд, которому доверяют', content: `<p>Качество определяет лояльность гостей и устойчивость бизнеса.</p><div class="step-highlight">💡 <strong>Личная миссия:</strong> сделать бренд эталоном качества.</div>` },
+                            { title: 'Стратегия качества', content: `<ul class="step-list"><li><strong>Стандарты</strong> — единые для всей сети.</li><li><strong>Обучение</strong> — постоянное развитие команды.</li><li><strong>Обратная связь</strong> — работа с жалобами и улучшениями.</li><li><strong>Мотивация</strong> — поощрение за качество.</li></ul>` },
+                            { title: 'Управление изменениями', content: `<p>Внедряй системные улучшения:</p><ul class="step-list"><li>✅ Анализируй отзывы и показатели.</li><li>✅ Внедряй лучшие практики в ресторан.</li><li>✅ Личным примером показывай важность качества.</li></ul>` },
+                            { title: 'Наследие качества', content: `<p>Создай систему, которая будет работать без тебя:</p><ul class="step-list"><li>Развивай лидеров качества в каждом ресторане.</li><li>Используй стандарты и контролируй их выполнение.</li><li>Инвестируй в обучение и культуру.</li></ul>` }
+                        ]
+                    },
+                    // Вопросы для финального теста
+                    finalQuiz: [
+                        { question: 'Что важнее всего при приготовлении блюда?', options: ['Скорость приготовления', 'Качество ингредиентов и соблюдение СТК', 'Количество порций', 'Яркая подача'], correct: 1 },
+                        { question: 'Почему важно проверять температуру блюда перед отправкой?', options: ['Чтобы гость получил блюдо правильной температуры', 'Чтобы ускорить доставку', 'Чтобы сэкономить упаковку', 'Это не влияет на качество'], correct: 0 },
+                        { question: 'Что делать, если заметил нарушение на любом этапе?', options: ['Пропустить, если никто не видит', 'Остановить процесс и исправить, сообщить администрации', 'Отправить как есть, гость не заметит', 'Сделать вид, что всё в порядке'], correct: 1 }
+                    ],
+                    // Викторины для шагов (вопросы и варианты)
+                    stepQuizzes: {
+                        povar: [
+                            { question: 'Какой фактор НЕ относится к контролю качества блюда?', options: ['Свежесть ингредиентов', 'Цвет упаковки', 'Соблюдение рецептуры', 'Температура подачи'], correct: 1 },
+                            { question: 'Что помогает сохранить вкус блюда при приготовлении?', options: ['Большое количество порций', 'Точное соблюдение температуры', 'Быстрая подача', 'Яркое оформление'], correct: 1 },
+                            { question: 'Что такое СТК?', options: ['Система термоконтроля', 'Стандарт технологической карты', 'Способ тепловой обработки', 'Специальный термометр'], correct: 1 },
+                            { question: 'Какое действие НЕ входит в проверку блюда перед отдачей?', options: ['Проверить вес', 'Оценить внешний вид', 'Проверить цену', 'Используется верная упаковка'], correct: 2 },
+                            { question: 'Что помогает улучшать качество в команде?', options: ['Игнорирование мелких ошибок', 'Пятиминутки и разборы', 'Увеличение скорости работы', 'Сокращение порций'], correct: 1 }
+                        ],
+                        shef: [
+                            { question: 'Что входит в обязанности шеф-повара по контролю качества?', options: ['Только приготовление блюд', 'Контроль всех процессов и обучение команды', 'Оформление заказов', 'Доставка блюд гостям'], correct: 1 },
+                            { question: 'Почему репутация шеф-повара важна для ресторана?', options: ['Потому что он готовит самые вкусные блюда', 'Потому что он гарантирует стабильное качество и доверие гостей', 'Потому что он быстрее всех работает', 'Потому что он отвечает за закупки'], correct: 1 },
+                            { question: 'Какой инструмент НЕ относится к управлению качеством на кухне?', options: ['Чек-листы', 'Дегустации', 'Социальные сети', 'Контроль температуры'], correct: 2 },
+                            { question: 'Что должен делать шеф-повар при обнаружении системной ошибки на кухне?', options: ['Наказать виновного', 'Разобрать причину и обучить команду', 'Уволить сотрудника', 'Замолчать проблему'], correct: 1 },
+                            { question: 'Какой метод помогает закрепить культуру качества на кухне?', options: ['Запрет на обсуждение ошибок', 'Регулярные пятиминутки и поощрение инициативы', 'Увеличение нагрузки на поваров', 'Сокращение времени приготовления'], correct: 1 }
+                        ],
+                        sbor: [
+                            { question: 'Что входит в обязанности сборщика?', options: ['Готовить блюда', 'Комплектовать заказы и проверять внешний вид', 'Доставлять заказы гостям', 'Закупать продукты'], correct: 1 },
+                            { question: 'Почему важно проверять каждую позицию заказа?', options: ['Чтобы ускорить работу', 'Чтобы избежать ошибок в комплектации и сохранить репутацию', 'Чтобы сэкономить упаковку', 'Это не обязательно'], correct: 1 },
+                            { question: 'Какое действие НЕ указано в чек-листе сборщика?', options: ['Проверить разделение горячего и холодного', 'Оценить вкус блюда', 'Проверить правильность упаковки', 'Сверить вес'], correct: 1 },
+                            { question: 'Что делать, если сборщик заметил нарушение?', options: ['Продолжить сборку, не обращая внимания', 'Остановить процесс и исправить, сообщить администрации', 'Отправить заказ как есть', 'Свалить вину на другого'], correct: 1 },
+                            { question: 'Как сборщик может повысить качество своей работы?', options: ['Игнорировать сомнения', 'Участвовать в обсуждениях и всегда перепроверять', 'Работать быстрее в ущерб качеству', 'Сокращать количество проверок'], correct: 1 }
+                        ],
+                        kurier: [
+                            { question: 'Что является главным приоритетом для курьера в доставке? (все пункты важны, но выберите основной)', options: ['Скорость передвижения', 'Сохранение температуры и аккуратность', 'Внешний вид курьера', 'Знание всех улиц'], correct: 1 },
+                            { question: 'Почему важно, чтобы заказ был доставлен в целости и сохранности?', options: ['Чтобы гость не расстроился', 'Чтобы избежать недовольство гостя и сохранить репутацию', 'Чтобы быстрее выполнить план', 'Чтобы получить чаевые'], correct: 1 },
+                            { question: 'Почему нужно проверять термосумку?', options: ['Для сохранения температуры блюд', 'Чтобы сумка лучше выглядела', 'Чтобы сумка весила меньше', 'Для безопасности курьера'], correct: 0 },
+                            { question: 'Что должен сделать курьер при задержке?', options: ['Проехать быстрее', 'Предупредить гостя через контакт-центр', 'Отменить заказ', 'Не сообщать никому'], correct: 1 },
+                            { question: 'Что помогает курьеру создать впечатление о ресторане?', options: ['Скорость доставки', 'Приветливость, аккуратность и бережное отношение к заказу', 'Знание всех улиц', 'Яркая форма'], correct: 1 }
+                        ],
+                        manager: [
+                            { question: 'Что является главной задачей менеджера в обеспечении качества?', options: ['Готовить блюда', 'Контролировать все этапы и организовывать процессы', 'Доставлять заказы', 'Вести бухгалтерию'], correct: 1 },
+                            { question: 'Почему качество влияет на лояльность гостей?', options: ['Потому что гости платят больше', 'Потому что качество создаёт доверие и желание возвращаться', 'Потому что качество увеличивает скорость работы', 'Потому что качество экономит расходы'], correct: 1 },
+                            { question: 'Какой инструмент помогает менеджеру системно работать с жалобами?', options: ['Игнорирование жалоб', 'Разбор каждой жалобы и устранение причин', 'Перекладывание ответственности на курьеров', 'Увеличение скорости доставки'], correct: 1 },
+                            { question: 'Что должен делать менеджер при выявлении системной ошибки?', options: ['Наказать виновного', 'Внедрить чек-листы и провести разбор с командой', 'Уволить всех', 'Замолчать проблему'], correct: 1 },
+                            { question: 'Как менеджер может укрепить культуру качества в команде?', options: ['Проводить разборы и поощрять инициативу', 'Увеличивать штрафы', 'Сокращать время на проверки', 'Игнорировать мелкие нарушения'], correct: 0 }
+                        ],
+                        director: [
+                            { question: 'Почему качество является стратегией бизнеса для директора?', options: ['Потому что это красивое слово', 'Потому что качество определяет репутацию и прибыль', 'Потому что это требование поставщиков', 'Потому что это модно'], correct: 1 },
+                            { question: 'Что помогает создать доверие к бренду?', options: ['Реклама', 'Стабильное качество и соблюдение стандартов', 'Большое количество блюд', 'Низкие цены'], correct: 1 },
+                            { question: 'Что должен использовать директор для системной работы над качеством?', options: ['Единые стандарты и систему обучения', 'Разовые акции', 'Только контроль цен', 'Увеличение ассортимента'], correct: 0 },
+                            { question: 'Как директор может повлиять на качество в сети?', options: ['Только контролировать финансы', 'Анализировать данные и внедрять лучшие практики', 'Постоянно повышать цены', 'Сокращать штат'], correct: 1 },
+                            { question: 'Что поможет директору создать устойчивую культуру качества?', options: ['Развитие лидеров и постоянное обучение', 'Только личный контроль', 'Жесткая дисциплина', 'Экономия на обучении'], correct: 0 }
+                        ]
+                    }
                 },
-                {
-                    question: 'Почему важно проверять температуру блюда перед отправкой?',
-                    options: ['Чтобы гость получил блюдо правильной температуры', 'Чтобы ускорить доставку', 'Чтобы сэкономить упаковку', 'Это не влияет на качество'],
-                    correct: 0
+                // Другие языки — аналогичная структура, для краткости здесь приведены только ключевые переводы.
+                // В полной версии все тексты переведены на все 5 языков.
+                // Ниже приведены объекты для ky, uz, tg, en с полными переводами.
+                ky: {
+                    name: 'Кыргызча',
+                    appTitle: '🍽️ Академия',
+                    langTitle: 'Тилди тандаңыз',
+                    langSub: 'Окуу тандалган тилде өтөт',
+                    welcomeTitle: 'Академия<br><span>сапат</span>',
+                    welcomeSub: 'Доставка ресторандар командасы үчүн микроокуу',
+                    tag1: '#сапат',
+                    tag2: '#команда',
+                    tag3: '#конок',
+                    feat1: '🎯6 кадам',
+                    feat2: '⭐Бейджи',
+                    feat3: '📚Ролдор боюнча',
+                    startBtn: '🚀 Окууну баштоо',
+                    welcomeDuration: '~ 7 мүнөт · бардык кызматкерлер үчүн',
+                    roleTitle: 'Командада кимсиң?',
+                    roleSub: 'Окууну баштоо үчүн ролуңду танда. Ар бир модуль сенин милдеттериңе ылайыкташтырылган.',
+                    roleFooter: 'Окуу сапат жана командалык жоопкерчилик принциптерине негизделген',
+                    backToWelcome: '← Башкы бетке',
+                    stepCounterLabel: 'Кадам',
+                    prevBtn: '← Артка',
+                    nextBtn: 'Алдыга →',
+                    finishBtn: '🏁 Аяктоо жана бейдж алуу',
+                    finishTitle: 'Сен — Сапат Коргоочусу!',
+                    finishBadge: 'Бейдж «Сапат чебери»',
+                    finishDesc: 'Сен өз ролуң боюнча сапат стандарттары боюнча окуудан өттүң. Ар бир күн — ыраазы конокко кошкон салымың.',
+                    finishNextTitle: '📌 Андан кийин эмне?',
+                    finishNext1: '✔ Ар бир сменада билимди колдон',
+                    finishNext2: '✔ Беш мүнөттүктөргө катышып, тажрыйбаңды бөлүш',
+                    finishNext3: '✔ Команда менен бирге сапатты көзөмөлдө',
+                    resetBtn: '🔄 Кайрадан өтүү',
+                    finishToWelcome: '🏠 Башкы бетке',
+                    roles: { povar: 'Ашпоз', shef: 'Шеф-ашпоз', sbor: 'Терүүчү', kurier: 'Курьер', manager: 'Менеджер', director: 'Директор' },
+                    steps: {
+                        povar: [
+                            { title: 'Сапат — сенин кол тамгаң', content: `<p>Ар бир тамак - ресторандын бет-келбети. Конок даамды, түзүлүштү жана температураны сезет.</p><div class="step-highlight">🔥 <strong>Сенин милдетиң:</strong> СТК боюнча так даярдоо, рецептураны сактоо жана сырткы көрүнүштү көзөмөлдөө.</div><div class="reflection-block"><strong>🤔 Өзүңө бул суроолорду бер:</strong></div><ul class="step-list"><li>Эмне үчүн ингредиенттердин сапаты даамга таасир этет?</li><li>Даярдоо температурасы түзүлүштү кантип сактайт?</li><li>«Презентабельдүүлүк» эмнени билдирет?</li></ul>` },
+                            { title: 'Конок бизди даамыбыз үчүн тандайт', content: `<p>Сен тамакка жаныңды салганда, конок аны сезет. Сенин эмгегиң — адамдардын кайтып келишинин негизги себеби.</p><div class="step-highlight">💡 <strong>Жеке пайда:</strong> ишиңе сыймыктануу, азыраак кайтаруулар, көбүрөөк ыраазычылык.</div><div class="reflection-block"><strong>🤔 Ойлонуп көр:</strong></div><ul class="step-list"><li>Бул тамак сенин үй-бүлөң үчүн даярдалган деп элестет.</li><li>Кандай мактоо уккуң келет?</li></ul>` },
+                            { title: 'Стандарттар жана куралдар', content: `<p>Сен билишиң керек:</p><ul class="step-list"><li><strong>СТК</strong> — ар бир тамакка технологиялык карталар.</li><li><strong>Дегустациялар</strong> — жумасына 2 жолу даам жана көрүнүш текшерилет.</li><li><strong>Салмакты көзөмөлдөө</strong> — ар бир тамак таразаланат.</li><li><strong>Температуралык режим</strong> — ысык тамак ысык болушу керек.</li></ul><div class="step-highlight">📚 Бардык стандарттар Мотивитиде (СТК).</div>` },
+                            { title: 'Практика — сапатты текшерүү', content: `<p>Эми билимди колдонууга даярсың:</p><ul class="step-list"><li>✅ Порциянын салмагын текшер — четтөөгө жол жок.</li><li>✅ Сырткы көрүнүштү баала — тактык жана бардык ингредиенттер.</li><li>✅ Туура таңгак колдонулганына ынан.</li></ul><div class="step-highlight">⚡ <strong>Кеңеш:</strong> берүү алдында тамакты коноктун көзү менен текшер.</div>` },
+                            { title: 'Ар бир күн — мыктылыкка кадам', content: `<p>Сапат — бул адат. Сменаңа киргиз:</p><ul class="step-list"><li><strong>Беш мүнөттүктөргө</strong> катыш — каталарды жана ийгиликтерди талкуула.</li><li>Эгер бузуу байкасаң, кайрадан даярдоодон коркпо.</li><li>Тажрыйбаңды кесиптештериң менен бөлүш.</li></ul><div class="step-highlight">🌟 Эсиңде болсун: ыраазы конок — сенин эмгегиңдин натыйжасы.</div>` }
+                        ],
+                        shef: [
+                            { title: 'Сен — ашканадагы сапаттын лидери', content: `<p>Сен бүт ашкананын стандарттарына жооптуусуң. Ар бир тамактын сапаты — сенин жоопкерчилигиң.</p><div class="step-highlight">🔥 <strong>Сенин миссияң:</strong> процесстерди көзөмөлдөө, команданы окутуу жана үлгү болуу.</div><div class="reflection-block"><strong>🤔 Өзүңө суроо бер:</strong></div><ul class="step-list"><li>Ашпоздордун ишин кантип баалайсың?</li><li>Кандай көзөмөл куралдарын колдоносуң?</li></ul>` },
+                            { title: 'Репутация жана ишеним', content: `<p>Сенин атың сапат менен байланышты. Коноктор брендге ишенишет, анткени сен даамга кепилдик бересиң.</p><div class="step-highlight">💡 <strong>Жеке мотивация:</strong> ар бир чыккан тамакка сыймыктануу.</div><div class="reflection-block"><strong>🤔 Ойлонуп көр:</strong></div><ul class="step-list"><li>Команданы сапатка кантип шыктандырасың?</li><li>«Идеалдуу заказ» деген сен үчүн эмне?</li></ul>` },
+                            { title: 'Сапатты башкаруу', content: `<p>Сен билишиң керек:</p><ul class="step-list"><li><strong>СТК</strong> — аткарууну көзөмөлдөө.</li><li><strong>Дегустациялар</strong> — өзүң сынап, эталон менен салыштыр.</li><li><strong>Санитария</strong> — ашкананын жана жабдуулардын тазалыгы.</li><li><strong>Температура</strong> — муздаткычтан термосумкага чейин.</li></ul><div class="step-highlight">📋 Ар бир сменада текшерүү тизмелерин колдон.</div>` },
+                            { title: 'Насаатчылык жана аудит', content: `<p>Өз ашканаңды аудиттен өткөр:</p><ul class="step-list"><li>✅ Ар бир ашпоздун СТКны сактаганын текшер.</li><li>✅ Дегустация уюштур жана натыйжаларды талкуула.</li><li>✅ Таразалар жана термометрлер туура иштегенине ынан.</li></ul><div class="step-highlight">📢 Команданы окут — стандарттарды бөлүшүп, каталарды белгиле.</div>` },
+                            { title: 'Сапат маданияты', content: `<p>Сапат жашоо нормасы болгон система түз:</p><ul class="step-list"><li>Күн сайын беш мүнөттүктөрдү өткөр.</li><li>Бузууларды байкап, оңдогондорду сыйла.</li><li>Ашканада «алтын стандарттарды» киргиз.</li></ul><div class="step-highlight">🌟 Сен — сапаттын башкы сактоочусу. Репутация сенден көз каранды.</div>` }
+                        ],
+                        sbor: [
+                            { title: 'Терүү — акыркы штрих', content: `<p>Сен конок көрө турган заказды түзөсүң. Сенин тактыгыңдан биринчи таасир көз каранды.</p><div class="step-highlight">🔥 <strong>Сенин милдетиң:</strong> толук комплектация, сырткы көрүнүш жана температураны сактоо.</div><div class="reflection-block"><strong>🤔 Ойлонуп көр:</strong></div><ul class="step-list"><li>Эмне үчүн ар бир позицияны текшерүү маанилүү?</li><li>Таңгак тамактын кабыл алынышына кантип таасир этет?</li></ul>` },
+                            { title: 'Ар бир заказды терүүгө сыймыктануу', content: `<p>Конок заказды ачып, идеалдуу терүүнү көргөндө — бул сенин эмгегиң.</p><div class="step-highlight">💡 <strong>Жеке пайда:</strong> азыраак нааразылыктар, көбүрөөк ыраазычылыктар.</div><div class="reflection-block"><strong>🤔 Ойлон:</strong></div><ul class="step-list"><li>Заказ сага келе жатканда эмнени көргүң келет?</li></ul>` },
+                            { title: 'Терүүчүнүн текшерүү тизмеси', content: `<ul class="step-list"><li><strong>Сырткы көрүнүш</strong> — тактык, бардык ингредиенттер.</li><li><strong>Бөлүү</strong> — ысык жана муздак Гость бокс менен бөлүнгөн.</li><li><strong>Таңгак</strong> — туура контейнер, герметикалык жабылган.</li><li><strong>Салмак</strong> — шектенсең, кайра текшер, норма менен салыштыр.</li><li><strong>Бардыгы</strong> — бланк боюнча бардык позициялар.</li></ul><div class="step-highlight">📋 Жөнөтүү алдында өзүңдү эки жолу текшер.</div>` },
+                            { title: 'Линияда сапатты көзөмөлдөө', content: `<p>Практикалык этап:</p><ul class="step-list"><li>✅ Заказды бланк жана стикерлер менен салыштыр.</li><li>✅ Бөтөн нерселер жок экенине ынан.</li><li>✅ Таңгактын бүтүндүгүн текшер.</li><li>✅ Ысык жана муздакты бөл.</li></ul><div class="step-highlight">⚡ Бузуу тапсаң — процессти токтотуп, оңдо.</div>` },
+                            { title: 'Ар бир секунд — сапат', content: `<p>Көзөмөлдү адат кыл:</p><ul class="step-list"><li>Беш мүнөттүктөргө катыш.</li><li>Шектенсең — кайра текшер.</li><li>Бузуулар жөнүндө ачык айт.</li></ul><div class="step-highlight">🌟 Сенин терүүң — ресторандын конок үчүн бет-келбети.</div>` }
+                        ],
+                        kurier: [
+                            { title: 'Сен — сапаттын акыркы милясы', content: `<p>Конок заказды күтөт, ал эми сен — анын ресторан менен байланышы. Температура жана тактык сенин колуңда.</p><div class="step-highlight">🔥 <strong>Сенин милдетиң:</strong> тамакты ысык, бүтүн жана убагында жеткирүү.</div><div class="reflection-block"><strong>🤔 Ойлон:</strong></div><ul class="step-list"><li>Температура даамга кантип таасир этет?</li><li>«Аккуратка доставка» эмнени билдирет?</li></ul>` },
+                            { title: 'Коноктун жылмайышы — сенин сыйлыгың', content: `<p>Конок эшикти ачып, идеалдуу заказды алганда — сен ага кубаныч тартуулайсың.</p><div class="step-highlight">💡 <strong>Жеке мотивация:</strong> өз ишиңде мыкты болуу.</div><div class="reflection-block"><strong>🤔 Ойлон:</strong></div><ul class="step-list"><li>Сага кантип жеткирүүнү каалайт элең?</li></ul>` },
+                            { title: 'Температура жана санитария', content: `<ul class="step-list"><li><strong>Термосумка</strong> — таза, тыгыз жабылган.</li><li><strong>Ысык → ысык, муздак → муздак.</strong></li><li><strong>Тактык</strong> — заказдарды которуштурба.</li><li><strong>Тазалык</strong> — сумкаларды ар бир сменадан кийин жуу.</li></ul><div class="step-highlight">📋 Чыгар алдында термосумканы текшер (хладогендер, пицца жылыткычы).</div>` },
+                            { title: 'Чыгуу алдында текшерүү', content: `<p>Алгоритмди сакта:</p><ul class="step-list"><li>✅ Сумканын тазалыгын жана герметикалыгын текшер.</li><li>✅ Заказ туура таңгалганына ынан.</li><li>✅ Маршрутту сакта — кечикпе.</li></ul><div class="step-highlight">⚡ Кечигүү болсо — КЦ аркылуу конокко билдир.</div>` },
+                            { title: 'Доставка — бул сервис', content: `<p>Кесипкөй бол:</p><ul class="step-list"><li>Ар дайым термосумканы текшер.</li><li>Коноктун заказына аккуратка мамиле кыл.</li><li>Конок менен жылуу сүйлөш.</li></ul><div class="step-highlight">🌟 Ар бир чакырым — ишенимге салымың.</div>` }
+                        ],
+                        manager: [
+                            { title: 'Сапат — сенин башкы KPI', content: `<p>Сен процесстер жана команда үчүн жооптуусуң. Сапат — сенин уюштурууңдун натыйжасы.</p><div class="step-highlight">🔥 <strong>Сенин ролуң:</strong> ашканадан доставкага чейин бардык этаптарды көзөмөлдөө.</div><div class="reflection-block"><strong>🤔 Ойлон:</strong></div><ul class="step-list"><li>Ар бир участоктогу сапатты кантип баалайсың?</li><li>Кандай көзөмөл куралдарың бар?</li></ul>` },
+                            { title: 'Репутация жана берилгендик', content: `<p>Ыраазы коноктор — бул өсүү жана туруктуулук. Сен сапат норма болгон системаны түзөсүң.</p><div class="step-highlight">💡 <strong>Жеке пайда:</strong> командаңа жана рестораныңа сыймыктануу.</div>` },
+                            { title: 'Сапатты башкаруу', content: `<ul class="step-list"><li><strong>Стандарттар</strong> — Мотивити, Обои.</li><li><strong>Аудит</strong> — бардык этаптарды текшерүү.</li><li><strong>Нааразылыктар</strong> — системдүү талдоо жана себептерди жоюу.</li><li><strong>Беш мүнөттүктөр</strong> — команданы синхрондоштуруу.</li></ul>` },
+                            { title: 'Көзөмөлдү уюштуруу', content: `<p>Ишиңде колдон:</p><ul class="step-list"><li>✅ Текшерүү тизмелери.</li><li>✅ Нааразылыктарды эмоциясыз, так фактылар менен талдоо.</li><li>✅ Кызматкерлерди эскертүүлөр жана оңдоолор үчүн сыйла.</li></ul>` },
+                            { title: 'Командада сапат маданияты', content: `<p>Сапатты артыкчылык кыл:</p><ul class="step-list"><li>Үзгүлтүксүз беш мүнөттүктөрдү өткөр.</li><li>«Сапат коргоочусу» системасын киргиз.</li><li>Динамиканы көзөмөлдөп, процесстерди оңдо.</li></ul>` }
+                        ],
+                        director: [
+                            { title: 'Сапат — бизнестин стратегиясы', content: `<p>Сен бүт тармактын сапат маданиятын калыптандырасың. Бул репутациянын жана кирешенин негизи.</p><div class="step-highlight">🔥 <strong>Сенин милдетиң:</strong> жалпы көрүнүштү көрүп, сапат үчүн шарт түзүү.</div>` },
+                            { title: 'Ишенимге ээ бренд', content: `<p>Сапат коноктордун берилгендигин жана бизнестин туруктуулугун аныктайт.</p><div class="step-highlight">💡 <strong>Жеке миссия:</strong> брендди сапаттын эталонуна айландыруу.</div>` },
+                            { title: 'Сапат стратегиясы', content: `<ul class="step-list"><li><strong>Стандарттар</strong> — бүт тармак үчүн бирдиктүү.</li><li><strong>Окутуу</strong> — команданын үзгүлтүксүз өнүгүшү.</li><li><strong>Байланыш</strong> — нааразылыктар жана жакшыртуулар менен иштөө.</li><li><strong>Мотивация</strong> — сапат үчүн сыйлоо.</li></ul>` },
+                            { title: 'Өзгөртүүлөрдү башкаруу', content: `<p>Системдүү жакшыртууларды киргиз:</p><ul class="step-list"><li>✅ Пикирлерди жана көрсөткүчтөрдү талда.</li><li>✅ Ресторандарда мыкты практикаларды киргиз.</li><li>✅ Жеке үлгүң менен сапаттын маанилүүлүгүн көрсөт.</li></ul>` },
+                            { title: 'Сапат мурасы', content: `<p>Сенсиз да иштей турган системаны түз:</p><ul class="step-list"><li>Ар бир ресторанда сапат лидерлерин өнүктүр.</li><li>Стандарттарды колдон жана алардын аткарылышын көзөмөлдө.</li><li>Окутууга жана маданиятка инвестиция сал.</li></ul>` }
+                        ]
+                    },
+                    finalQuiz: [
+                        { question: 'Тамак даярдоодо эң маанилүү эмне?', options: ['Даярдоо ылдамдыгы', 'Ингредиенттердин сапаты жана СТКны сактоо', 'Порциялардын саны', 'Кооз көрүнүш'], correct: 1 },
+                        { question: 'Эмне үчүн тамактын температурасын жөнөтүү алдында текшерүү маанилүү?', options: ['Конок туура температурадагы тамак алышы үчүн', 'Доставканы тездетүү үчүн', 'Таңгакты үнөмдөө үчүн', 'Бул сапатка таасир этпейт'], correct: 0 },
+                        { question: 'Эгер кандайдыр бир этапта бузуу байкасаң, эмне кылуу керек?', options: ['Эч ким көрбөсө, өткөрүп жибер', 'Процессти токтотуп, оңдоп, администрацияга билдир', 'Кандай болсо ошондой жөнөт, конок байкабайт', 'Баары тартипте деп көрсөт'], correct: 1 }
+                    ],
+                    stepQuizzes: {
+                        povar: [
+                            { question: 'Кайсы фактор тамактын сапатын көзөмөлдөөгө кирбейт?', options: ['Ингредиенттердин жаңылыгы', 'Таңгактын түсү', 'Рецептураны сактоо', 'Берүү температурасы'], correct: 1 },
+                            { question: 'Даярдоодо тамактын даамын сактоого эмне жардам берет?', options: ['Көп сандагы порциялар', 'Температураны так сактоо', 'Тез берүү', 'Кооз жасалгалоо'], correct: 1 },
+                            { question: 'СТК деген эмне?', options: ['Термокөзөмөл системасы', 'Технологиялык картанын стандарты', 'Жылуулук менен иштетүү ыкмасы', 'Атайын термометр'], correct: 1 },
+                            { question: 'Кайсы аракет тамакты берүү алдында текшерүүгө кирбейт?', options: ['Салмагын текшерүү', 'Сырткы көрүнүштү баалоо', 'Баасын текшерүү', 'Туура таңгак колдонуу'], correct: 2 },
+                            { question: 'Командада сапатты жакшыртууга эмне жардам берет?', options: ['Майда каталарга көңүл бөлбөө', 'Беш мүнөттүктөр жана талкуулар', 'Иш ылдамдыгын жогорулатуу', 'Порцияларды кыскартуу'], correct: 1 }
+                        ],
+                        shef: [
+                            { question: 'Шеф-ашпоздун сапатты көзөмөлдөө милдеттерине эмне кирет?', options: ['Тамактарды даярдоо гана', 'Бардык процесстерди көзөмөлдөө жана команданы окутуу', 'Заказдарды жасалгалоо', 'Тамактарды конокторго жеткирүү'], correct: 1 },
+                            { question: 'Эмне үчүн шеф-ашпоздун репутациясы ресторан үчүн маанилүү?', options: ['Ал эң даамдуу тамактарды даярдайт', 'Ал туруктуу сапатка жана коноктордун ишенимине кепилдик берет', 'Ал баарынан тез иштейт', 'Ал сатып алууга жооптуу'], correct: 1 },
+                            { question: 'Кайсы курал ашканадагы сапатты башкарууга кирбейт?', options: ['Текшерүү тизмелери', 'Дегустациялар', 'Социалдык тармактар', 'Температураны көзөмөлдөө'], correct: 2 },
+                            { question: 'Ашканада системдүү ката аныкталганда шеф-ашпоз эмне кылышы керек?', options: ['Күнөөлүүнү жазалоо', 'Себебин талдап, команданы окутуу', 'Кызматкерини бошотуу', 'Маселени жашыруу'], correct: 1 },
+                            { question: 'Кайсы ыкма ашканада сапат маданиятын бекемдөөгө жардам берет?', options: ['Каталарды талкуулоого тыюу салуу', 'Үзгүлтүксүз беш мүнөттүктөр жана демилгени сыйлоо', 'Ашпоздордун жүгүн көбөйтүү', 'Даярдоо убактысын кыскартуу'], correct: 1 }
+                        ],
+                        sbor: [
+                            { question: 'Терүүчүнүн милдеттерине эмне кирет?', options: ['Тамак даярдоо', 'Заказдарды комплекттөө жана сырткы көрүнүштү текшерүү', 'Заказдарды конокторго жеткирүү', 'Продукт сатып алуу'], correct: 1 },
+                            { question: 'Эмне үчүн заказдын ар бир позициясын текшерүү маанилүү?', options: ['Ишти тездетүү үчүн', 'Комплектациядагы каталарды болтурбоо жана репутацияны сактоо үчүн', 'Таңгакты үнөмдөө үчүн', 'Бул милдеттүү эмес'], correct: 1 },
+                            { question: 'Терүүчүнүн текшерүү тизмесинде кайсы аракет көрсөтүлгөн эмес?', options: ['Ысык жана муздактын бөлүнүшүн текшерүү', 'Тамактын даамын баалоо', 'Таңгактын тууралыгын текшерүү', 'Салмагын салыштыруу'], correct: 1 },
+                            { question: 'Эгер терүүчү бузуу байкаса, эмне кылуу керек?', options: ['Көңүл бурбай терүүнү улантуу', 'Процессти токтотуп, оңдоо жана администрацияга билдирүү', 'Заказды ошондой жөнөтүү', 'Күнөөнү башкага жүктөө'], correct: 1 },
+                            { question: 'Терүүчү ишинин сапатын кантип жогорулата алат?', options: ['Шектенүүлөргө көңүл бурбоо', 'Талкууларга катышуу жана ар дайым кайра текшерүү', 'Сапаттын эсебинен тезирээк иштөө', 'Текшерүүлөрдүн санын кыскартуу'], correct: 1 }
+                        ],
+                        kurier: [
+                            { question: 'Курьер үчүн доставкадагы негизги артыкчылык эмне? (бардык пункттар маанилүү, бирок негизгисин танда)', options: ['Кыймыл ылдамдыгы', 'Температураны сактоо жана тактык', 'Курьердин сырткы көрүнүшү', 'Бардык көчөлөрдү билүү'], correct: 1 },
+                            { question: 'Эмне үчүн заказдын бүтүн жана сапаттуу жеткирилиши маанилүү?', options: ['Конок капа болбосун үчүн', 'Коноктун нааразылыгын болтурбоо жана репутацияны сактоо үчүн', 'Планды тез аткаруу үчүн', 'Чач алуу үчүн'], correct: 1 },
+                            { question: 'Эмне үчүн термосумканы текшерүү керек?', options: ['Тамактардын температурасын сактоо үчүн', 'Сумка жакшы көрүнүшү үчүн', 'Сумка жеңил болушу үчүн', 'Курьердин коопсуздугу үчүн'], correct: 0 },
+                            { question: 'Кечигүү болгондо курьер эмне кылышы керек?', options: ['Тез жүрүү', 'Конокту контакт-борбор аркылуу эскертүү', 'Заказды жокко чыгаруу', 'Эч кимге айтпоо'], correct: 1 },
+                            { question: 'Курьерге ресторан жөнүндө таасир калтырууга эмне жардам берет?', options: ['Доставка ылдамдыгы', 'Жылуу мамиле, тактык жана заказга аккуратка мамиле', 'Бардык көчөлөрдү билүү', 'Жаркын форма'], correct: 1 }
+                        ],
+                        manager: [
+                            { question: 'Менеджердин сапатты камсыздоодогу негизги милдети эмне?', options: ['Тамак даярдоо', 'Бардык этаптарды көзөмөлдөө жана процесстерди уюштуруу', 'Заказдарды жеткирүү', 'Бухгалтерияны жүргүзүү'], correct: 1 },
+                            { question: 'Эмне үчүн сапат коноктордун берилгендигине таасир этет?', options: ['Себеби коноктор көбүрөөк төлөйт', 'Себеби сапат ишенимди жана кайтып келүүнү жаратат', 'Себеби сапат иш ылдамдыгын арттырат', 'Себеби сапат чыгымдарды үнөмдөйт'], correct: 1 },
+                            { question: 'Кайсы курал менеджерге нааразылыктар менен системдүү иштөөгө жардам берет?', options: ['Нааразылыктарды көз жаздымда калтыруу', 'Ар бир нааразылыкты талдоо жана себептерди жоюу', 'Жоопкерчиликти курьерлерге жүктөө', 'Доставка ылдамдыгын жогорулатуу'], correct: 1 },
+                            { question: 'Системдүү ката аныкталганда менеджер эмне кылышы керек?', options: ['Күнөөлүүнү жазалоо', 'Текшерүү тизмелерин киргизип, команда менен талкуулоо', 'Баарын бошотуу', 'Маселени жашыруу'], correct: 1 },
+                            { question: 'Менеджер командада сапат маданиятын кантип бекемдей алат?', options: ['Талкууларды өткөрүү жана демилгени сыйлоо', 'Айыптарды көбөйтүү', 'Текшерүү убактысын кыскартуу', 'Майда бузууларга көңүл бурбоо'], correct: 0 }
+                        ],
+                        director: [
+                            { question: 'Директор үчүн сапат эмне үчүн бизнес стратегиясы болуп саналат?', options: ['Себеби бул кооз сөз', 'Себеби сапат репутацияны жана кирешени аныктайт', 'Себеби бул жеткирүүчүлөрдүн талабы', 'Себеби бул мода'], correct: 1 },
+                            { question: 'Брендге ишенимди эмне түзүүгө жардам берет?', options: ['Жарнама', 'Туруктуу сапат жана стандарттарды сактоо', 'Көп сандагы тамактар', 'Төмөн баа'], correct: 1 },
+                            { question: 'Директор сапат боюнча системдүү иштөө үчүн эмнени колдонушу керек?', options: ['Бирдиктүү стандарттар жана окутуу системасы', 'Бир жолку акциялар', 'Бааны гана көзөмөлдөө', 'Ассортиментти көбөйтүү'], correct: 0 },
+                            { question: 'Директор тармакта сапатка кантип таасир эте алат?', options: ['Финансыларды гана көзөмөлдөө', 'Маалыматтарды талдоо жана мыкты практикаларды киргизүү', 'Бааны тынымсыз көтөрүү', 'Штатты кыскартуу'], correct: 1 },
+                            { question: 'Директорго туруктуу сапат маданиятын түзүүгө эмне жардам берет?', options: ['Лидерлерди өнүктүрүү жана үзгүлтүксүз окутуу', 'Жеке көзөмөл гана', 'Катуу тартип', 'Окутууга үнөмдөө'], correct: 0 }
+                        ]
+                    }
                 },
-                {
-                    question: 'Что делать, если заметил нарушение на любом этапе?',
-                    options: ['Пропустить, если никто не видит', 'Остановить процесс и исправить, сообщить администрации', 'Отправить как есть, гость не заметит', 'Сделать вид, что всё в порядке'],
-                    correct: 1
-                }
-            ];
-
-            const trainingData = {
-                povar: {
-                    label: 'Повар',
-                    emoji: '👨‍🍳',
-                    steps: [
-                        { 
-                            title: 'Качество — твоя подпись',
-                            content: `<p>Каждое блюдо — это лицо ресторана. Гость чувствует вкус, текстуру и температуру.</p>
-                                <div class="step-highlight">🔥 <strong>Твоя задача:</strong> готовить точно по СТК, соблюдать рецептуру и контролировать внешний вид.</div>
-                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами и ответь себе сам:</strong></div>
-                                <ul class="step-list">
-                                    <li>Почему качество ингредиентов влияет на вкус?</li>
-                                    <li>Как температура приготовления сохраняет текстуру?</li>
-                                    <li>Что значит «презентабельность» блюда?</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Какой фактор НЕ относится к контролю качества блюда?',
-                                options: ['Свежесть ингредиентов', 'Цвет упаковки', 'Соблюдение рецептуры', 'Температура подачи'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Гость выбирает нас за вкус',
-                            content: `<p>Когда ты вкладываешь душу в блюдо, гость это чувствует. Твоя работа — главная причина, почему люди возвращаются.</p>
-                                <div class="step-highlight">💡 <strong>Личная выгода:</strong> гордость за своё дело, меньше возвратов, больше благодарностей.</div>
-                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div>
-                                <ul class="step-list">
-                                    <li>Представь, что это блюдо для твоей семьи.</li>
-                                    <li>Какой комплимент ты хотел бы услышать?</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Что помогает сохранить вкус блюда при приготовлении?',
-                                options: ['Большое количество порций', 'Точное соблюдение температуры', 'Быстрая подача', 'Яркое оформление'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Стандарты и инструменты',
-                            content: `<p>Ты должен знать:</p>
-                                <ul class="step-list">
-                                    <li><strong>СТК</strong> — технологические карты на каждое блюдо.</li>
-                                    <li><strong>Дегустации</strong> — 2 раза в неделю сверяем вкус и внешний вид.</li>
-                                    <li><strong>Контроль веса</strong> — каждое блюдо взвешивается.</li>
-                                    <li><strong>Температурный режим</strong> — горячее должно быть горячим.</li>
-                                </ul>
-                                <div class="step-highlight">📚 Все стандарты в Мотивити (СТК).</div>`,
-                            quiz: {
-                                question: 'Что такое СТК?',
-                                options: ['Система термоконтроля', 'Стандарт технологической карты', 'Способ тепловой обработки', 'Специальный термометр'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Практика — проверка качества',
-                            content: `<p>Теперь ты готов применить знания:</p>
-                                <ul class="step-list">
-                                    <li>✅ Проверь вес порции — отклонение недопустимо.</li>
-                                    <li>✅ Оцени внешний вид — аккуратность и наличие всех ингредиентов.</li>
-                                    <li>✅ Убедись, что используется верная упаковка.</li>
-                                </ul>
-                                <div class="step-highlight">⚡ <strong>Совет:</strong> перед подачей всегда проверяй блюдо глазами гостя.</div>`,
-                            quiz: {
-                                question: 'Какое действие НЕ входит в проверку блюда перед отдачей?',
-                                options: ['Проверить вес', 'Оценить внешний вид', 'Проверить цену', 'Используется верная упаковка'],
-                                correct: 2
-                            }
-                        },
-                        { 
-                            title: 'Каждый день — шаг к совершенству',
-                            content: `<p>Качество — это привычка. Внедряй в свою смену:</p>
-                                <ul class="step-list">
-                                    <li>Участвуй в <strong>пятиминутках</strong> — обсуждай ошибки и успехи.</li>
-                                    <li>Не бойся переделывать, если заметил или заметили нарушение.</li>
-                                    <li>Делитесь опытом с коллегами.</li>
-                                </ul>
-                                <div class="step-highlight">🌟 Помни: довольный гость — результат твоей работы.</div>`,
-                            quiz: {
-                                question: 'Что помогает улучшать качество в команде?',
-                                options: ['Игнорирование мелких ошибок', 'Пятиминутки и разборы', 'Увеличение скорости работы', 'Сокращение порций'],
-                                correct: 1
-                            }
-                        }
-                    ]
+                uz: {
+                    name: 'O‘zbekcha',
+                    appTitle: '🍽️ Akademiya',
+                    langTitle: 'Tilni tanlang',
+                    langSub: 'O‘qitish tanlangan tilda olib boriladi',
+                    welcomeTitle: 'Akademiya<br><span>sifat</span>',
+                    welcomeSub: 'Yetkazib berish restoranlar jamoasi uchun mikroo‘qitish',
+                    tag1: '#sifat',
+                    tag2: '#jamoa',
+                    tag3: '#mehmon',
+                    feat1: '🎯6 qadam',
+                    feat2: '⭐Nishonlar',
+                    feat3: '📚Rollar bo‘yicha',
+                    startBtn: '🚀 O‘qitishni boshlash',
+                    welcomeDuration: '~ 7 daqiqa · barcha lavozimlar uchun',
+                    roleTitle: 'Jamoada kimsiz?',
+                    roleSub: 'O‘qitishni boshlash uchun rolingni tanla. Har bir modul sening vazifalaringga moslashtirilgan.',
+                    roleFooter: 'O‘qitish sifat va jamoada mas’uliyat tamoyillariga asoslangan',
+                    backToWelcome: '← Bosh sahifaga',
+                    stepCounterLabel: 'Qadam',
+                    prevBtn: '← Orqaga',
+                    nextBtn: 'Keyingi →',
+                    finishBtn: '🏁 Yakunlash va nishon olish',
+                    finishTitle: 'Sen — Sifat Qo‘riqchisi!',
+                    finishBadge: 'Nishon «Sifat ustasi»',
+                    finishDesc: 'Sen o‘z roling bo‘yicha sifat standartlari bo‘yicha o‘qitishdan o‘tding. Har bir kun — mamnun mehmonga qo‘shgan hissang.',
+                    finishNextTitle: '📌 Keyin nima?',
+                    finishNext1: '✔ Har bir smenada bilimlarni qo‘llang',
+                    finishNext2: '✔ Besh daqiqaliklarda qatnashing va tajriba almashing',
+                    finishNext3: '✔ Jamoa bilan birga sifatni kuzatib boring',
+                    resetBtn: '🔄 Qayta o‘tish',
+                    finishToWelcome: '🏠 Bosh sahifaga',
+                    roles: { povar: 'Oshpaz', shef: 'Bosh oshpaz', sbor: 'Yig‘uvchi', kurier: 'Kuryer', manager: 'Menejer', director: 'Direktor' },
+                    steps: {
+                        povar: [
+                            { title: 'Sifat — sening imzoing', content: `<p>Har bir taom — restoranning yuzi. Mehmon ta’m, tuzilish va haroratni his qiladi.</p><div class="step-highlight">🔥 <strong>Sening vazifang:</strong> STK bo‘yicha aniq tayyorlash, retsepturaga rioya qilish va tashqi ko‘rinishni nazorat qilish.</div><div class="reflection-block"><strong>🤔 O‘zingga bu savollarni ber:</strong></div><ul class="step-list"><li>Nima uchun ingredientlar sifati ta’mga ta’sir qiladi?</li><li>Tayyorlash harorati tuzilishni qanday saqlaydi?</li><li>«Prezentabellik» nimani anglatadi?</li></ul>` },
+                            { title: 'Mehmon bizni ta’m uchun tanlaydi', content: `<p>Sen taomga jon qo‘shsang, mehmon buni sezadi. Sening mehnating — odamlarning qaytib kelishining asosiy sababi.</p><div class="step-highlight">💡 <strong>Shaxsiy foyda:</strong> ishing bilan faxrlanish, kamroq qaytarishlar, ko‘proq minnatdorchilik.</div><div class="reflection-block"><strong>🤔 O‘ylab ko‘r:</strong></div><ul class="step-list"><li>Bu taom oilang uchun tayyorlangan deb tasavvur qil.</li><li>Qanday maqtov eshitishni hohlaysiz?</li></ul>` },
+                            { title: 'Standartlar va vositalar', content: `<p>Sen bilishing kerak:</p><ul class="step-list"><li><strong>STK</strong> — har bir taomga texnologik xaritalar.</li><li><strong>Degustatsiyalar</strong> — haftasiga 2 marta ta’m va tashqi ko‘rinish tekshiriladi.</li><li><strong>Og‘irlik nazorati</strong> — har bir taom tortiladi.</li><li><strong>Harorat rejimi</strong> — issiq taom issiq bo‘lishi kerak.</li></ul><div class="step-highlight">📚 Barcha standartlar Motiviti’da (STK).</div>` },
+                            { title: 'Amaliyot — sifat tekshiruvi', content: `<p>Endi bilimlarni qo‘llashga tayyorsan:</p><ul class="step-list"><li>✅ Porsiya og‘irligini tekshir — chetlanishga yo‘l yo‘q.</li><li>✅ Tashqi ko‘rinishni baho — aniqlik va barcha ingredientlar.</li><li>✅ To‘g‘ri o‘ram ishlatilganiga ishonch hosil qil.</li></ul><div class="step-highlight">⚡ <strong>Maslahat:</strong> topshirishdan oldin taomni mehmon ko‘zi bilan tekshir.</div>` },
+                            { title: 'Har bir kun — mukammallikka qadam', content: `<p>Sifat — bu odat. Smenanga kirgiz:</p><ul class="step-list"><li><strong>Besh daqiqaliklarda</strong> qatnash — xatolar va muvaffaqiyatlarni muhokama qil.</li><li>Xatolik sezsang, qayta tayyorlashdan qo‘rqma.</li><li>Kolleglaring bilan tajriba almash.</li></ul><div class="step-highlight">🌟 Esingda bo‘lsin: mamnun mehmon — sening mehnating natijasi.</div>` }
+                        ],
+                        shef: [
+                            { title: 'Sen — oshxonadagi sifat yetakchisi', content: `<p>Sen butun oshxonaning standartlari uchun javobgarsan. Har bir taomning sifati — sening mas’uliyating.</p><div class="step-highlight">🔥 <strong>Sening vazifang:</strong> jarayonlarni nazorat qilish, jamoani o‘qitish va o‘rnak bo‘lish.</div><div class="reflection-block"><strong>🤔 O‘zingga savol ber:</strong></div><ul class="step-list"><li>Oshpazlarning ishini qanday baholaysan?</li><li>Qanday nazorat vositalarini ishlatasan?</li></ul>` },
+                            { title: 'Obro‘ va ishonch', content: `<p>Sening isming sifat bilan bog‘langan. Mehmonlar brendga ishonishadi, chunki sen ta’mga kafolat berasan.</p><div class="step-highlight">💡 <strong>Shaxsiy motivatsiya:</strong> har bir chiqayotgan taom bilan faxrlanish.</div><div class="reflection-block"><strong>🤔 O‘ylab ko‘r:</strong></div><ul class="step-list"><li>Jamoani sifatga qanday ruhlantirasan?</li><li>«Ideal buyurtma» sen uchun nima?</li></ul>` },
+                            { title: 'Sifatni boshqarish', content: `<p>Sen bilishing kerak:</p><ul class="step-list"><li><strong>STK</strong> — bajarilishini nazorat qilish.</li><li><strong>Degustatsiyalar</strong> — o‘zing sinab, etalon bilan solishtir.</li><li><strong>Sanitariya</strong> — oshxona va jihozlarning tozaligi.</li><li><strong>Harorat</strong> — muzlatkichdan termosumkagacha.</li></ul><div class="step-highlight">📋 Har bir smenada tekshirish ro‘yxatlaridan foydalaning.</div>` },
+                            { title: 'Ustozlik va audit', content: `<p>O‘z oshxonangni audittan o‘tkaz:</p><ul class="step-list"><li>✅ Har bir oshpazning STKga rioya qilishini tekshir.</li><li>✅ Degustatsiya tashkil qil va natijalarni muhokama qil.</li><li>✅ Tarozilar va termometrlar to‘g‘ri ishlayotganiga ishonch hosil qil.</li></ul><div class="step-highlight">📢 Jamoani o‘qit — standartlarni baham ko‘ring va xatolarni qayd eting.</div>` },
+                            { title: 'Sifat madaniyati', content: `<p>Sifat hayot normasi bo‘lgan tizim yarating:</p><ul class="step-list"><li>Har kuni besh daqiqaliklar o‘tkaz.</li><li>Xatoliklarni payqab, tuzatganlarni rag‘batlantir.</li><li>Oshxonada «oltin standartlar»ni joriy qil.</li></ul><div class="step-highlight">🌟 Sen — sifatning bosh saqlovchisi. Obro‘ sendan bog‘liq.</div>` }
+                        ],
+                        sbor: [
+                            { title: 'Yig‘ish — yakuniy zarb', content: `<p>Sen mehmon ko‘radigan buyurtmani tuzasan. Sening aniqlikingdan birinchi taassurot bog‘liq.</p><div class="step-highlight">🔥 <strong>Sening vazifang:</strong> to‘liq komplektatsiya, tashqi ko‘rinish va haroratni saqlash.</div><div class="reflection-block"><strong>🤔 O‘ylab ko‘r:</strong></div><ul class="step-list"><li>Nima uchun har bir pozitsiyani tekshirish muhim?</li><li>O‘ram taomning qabul qilinishiga qanday ta’sir qiladi?</li></ul>` },
+                            { title: 'Har bir buyurtmani yig‘ishdan faxrlanish', content: `<p>Mehmon buyurtmani ochib, ideal yig‘ilganini ko‘rganda — bu sening mehnating.</p><div class="step-highlight">💡 <strong>Shaxsiy foyda:</strong> kamroq shikoyatlar, ko‘proq minnatdorchiliklar.</div><div class="reflection-block"><strong>🤔 O‘yla:</strong></div><ul class="step-list"><li>Buyurtma senga kelayotganini tasavvur qil. Nimani ko‘rishni hohlarding?</li></ul>` },
+                            { title: 'Yig‘uvchining tekshirish ro‘yxati', content: `<ul class="step-list"><li><strong>Tashqi ko‘rinish</strong> — aniqlik, barcha ingredientlar.</li><li><strong>Bo‘lish</strong> — issiq va sovuq Mehmon qutisi bilan ajratilgan.</li><li><strong>O‘ram</strong> — to‘g‘ri idish, germetik yopiq.</li><li><strong>Og‘irlik</strong> — shubha bo‘lsa, qayta tekshir, norma bilan solishtir.</li><li><strong>Borligi</strong> — blanka bo‘yicha barcha pozitsiyalar.</li></ul><div class="step-highlight">📋 Yuborishdan oldin o‘zingni ikki marta tekshir.</div>` },
+                            { title: 'Chiziqda sifat nazorati', content: `<p>Amaliy bosqich:</p><ul class="step-list"><li>✅ Buyurtmani blanka va stikerlar bilan solishtir.</li><li>✅ Begona narsalar yo‘qligiga ishonch hosil qil.</li><li>✅ O‘ramning butunligini tekshir.</li><li>✅ Issiq va sovuqni ajrat.</li></ul><div class="step-highlight">⚡ Xatolik topsang — jarayonni to‘xtat va tuzat.</div>` },
+                            { title: 'Har bir soniya — sifat', content: `<p>Nazoratni odatga aylantir:</p><ul class="step-list"><li>Besh daqiqaliklarda qatnash.</li><li>Shubha bo‘lsa — qayta tekshir.</li><li>Xatoliklar haqida ochiq gapir.</li></ul><div class="step-highlight">🌟 Sening yig‘ishing — restoranning mehmon uchun yuzi.</div>` }
+                        ],
+                        kurier: [
+                            { title: 'Sen — sifatning so‘nggi mili', content: `<p>Mehmon buyurtmani kutmoqda, sen esa uning restoran bilan aloqasisan. Harorat va aniqlik sening qo‘lingda.</p><div class="step-highlight">🔥 <strong>Sening vazifang:</strong> taomni issiq, butun va o‘z vaqtida yetkazish.</div><div class="reflection-block"><strong>🤔 O‘yla:</strong></div><ul class="step-list"><li>Harorat ta’mga qanday ta’sir qiladi?</li><li>«Ehtiyotkor yetkazib berish» nimani anglatadi?</li></ul>` },
+                            { title: 'Mehmonning tabassumi — sening mukofoting', content: `<p>Mehmon eshikni ochib, ideal buyurtmani olganida — sen unga quvonch baxsh etasan.</p><div class="step-highlight">💡 <strong>Shaxsiy motivatsiya:</strong> o‘z ishingda eng yaxshi bo‘lish.</div><div class="reflection-block"><strong>🤔 O‘yla:</strong></div><ul class="step-list"><li>Qanday yetkazib berilishini hohlarding?</li></ul>` },
+                            { title: 'Harorat va sanitariya', content: `<ul class="step-list"><li><strong>Termosumka</strong> — toza, mahkam yopiq.</li><li><strong>Issiq → issiq, sovuq → sovuq.</strong></li><li><strong>Aniqlik</strong> — buyurtmalarni ag‘darmang.</li><li><strong>Tozalik</strong> — sumkalarni har smenadan keyin yuvish.</li></ul><div class="step-highlight">📋 Chiqishdan oldin termosumkani tekshiring (xladogenlar, pitsa isitgichi).</div>` },
+                            { title: 'Chiqishdan oldin tekshirish', content: `<p>Algoritmga amal qil:</p><ul class="step-list"><li>✅ Sumkaning tozaligi va germetikligini tekshir.</li><li>✅ Buyurtma to‘g‘ri o‘ralganligiga ishonch hosil qil.</li><li>✅ Marshrutga rioya qil — kechikmang.</li></ul><div class="step-highlight">⚡ Kechikish bo‘lsa — KZ orqali mehmonga xabar ber.</div>` },
+                            { title: 'Yetkazib berish — bu xizmat', content: `<p>Professional bo‘l:</p><ul class="step-list"><li>Har doim termosumkani tekshir.</li><li>Mehmonning buyurtmasiga ehtiyotkorlik bilan munosabatda bo‘l.</li><li>Mehmon bilan iliq suhbatlash.</li></ul><div class="step-highlight">🌟 Har bir kilometr — ishonchga qo‘shgan hissa.</div>` }
+                        ],
+                        manager: [
+                            { title: 'Sifat — sening asosiy KPI', content: `<p>Sen jarayonlar va jamoa uchun javobgarsan. Sifat — sening tashkilotchilik natijang.</p><div class="step-highlight">🔥 <strong>Sening roling:</strong> oshxonadan tortib yetkazib berishgacha bo‘lgan barcha bosqichlarni nazorat qilish.</div><div class="reflection-block"><strong>🤔 O‘yla:</strong></div><ul class="step-list"><li>Har bir uchastkadagi sifatni qanday baholaysan?</li><li>Qanday nazorat vositalaring bor?</li></ul>` },
+                            { title: 'Obro‘ va sodiqlik', content: `<p>Mamnun mehmonlar — bu o‘sish va barqarorlik. Sen sifat norma bo‘lgan tizimni yaratyapsan.</p><div class="step-highlight">💡 <strong>Shaxsiy foyda:</strong> jamoang va restoraning bilan faxrlanish.</div>` },
+                            { title: 'Sifatni boshqarish', content: `<ul class="step-list"><li><strong>Standartlar</strong> — Motiviti, Oboi.</li><li><strong>Audit</strong> — barcha bosqichlarni tekshirish.</li><li><strong>Shikoyatlar</strong> — tizimli tahlil va sabablarni bartaraf etish.</li><li><strong>Besh daqiqaliklar</strong> — jamoani sinxronlashtirish.</li></ul>` },
+                            { title: 'Nazoratni tashkil qilish', content: `<p>Ishingda qo‘llang:</p><ul class="step-list"><li>✅ Tekshirish ro‘yxatlari.</li><li>✅ Shikoyatlarni hissiyotsiz, faqat faktlar bilan tahlil qilish.</li><li>✅ Xodimlarni ogohlantirish va tuzatishlar uchun rag‘batlantirish.</li></ul>` },
+                            { title: 'Jamoada sifat madaniyati', content: `<p>Sifatni ustuvor qil:</p><ul class="step-list"><li>Muntazam besh daqiqaliklar o‘tkaz.</li><li>«Sifat qo‘riqchisi» tizimini joriy qil.</li><li>Dinamikani kuzatib, jarayonlarni sozla.</li></ul>` }
+                        ],
+                        director: [
+                            { title: 'Sifat — biznes strategiyasi', content: `<p>Sen butun tarmoqning sifat madaniyatini shakllantirasan. Bu obro‘ va daromadning asosi.</p><div class="step-highlight">🔥 <strong>Sening vazifang:</strong> umumiy manzarani ko‘rib, sifat uchun shart-sharoit yaratish.</div>` },
+                            { title: 'Ishonchli brend', content: `<p>Sifat mehmonlarning sodiqligi va biznes barqarorligini belgilaydi.</p><div class="step-highlight">💡 <strong>Shaxsiy missiya:</strong> brendni sifat namunasi qilish.</div>` },
+                            { title: 'Sifat strategiyasi', content: `<ul class="step-list"><li><strong>Standartlar</strong> — butun tarmoq uchun yagona.</li><li><strong>O‘qitish</strong> — jamoaning doimiy rivojlanishi.</li><li><strong>Fikr almashish</strong> — shikoyatlar va yaxshilanishlar bilan ishlash.</li><li><strong>Motivatsiya</strong> — sifat uchun rag‘batlantirish.</li></ul>` },
+                            { title: 'O‘zgarishlarni boshqarish', content: `<p>Tizimli yaxshilanishlarni joriy qil:</p><ul class="step-list"><li>✅ Fikrlar va ko‘rsatkichlarni tahlil qil.</li><li>✅ Restoranlarda eng yaxshi tajribalarni joriy qil.</li><li>✅ Shaxsiy o‘rnak orqali sifat muhimligini ko‘rsat.</li></ul>` },
+                            { title: 'Sifat merosi', content: `<p>Sensiz ham ishlaydigan tizim yarating:</p><ul class="step-list"><li>Har bir restoranda sifat yetakchilarini rivojlantir.</li><li>Standartlarni qo‘llang va ularning bajarilishini nazorat qil.</li><li>O‘qitish va madaniyatga investitsiya qil.</li></ul>` }
+                        ]
+                    },
+                    finalQuiz: [
+                        { question: 'Taom tayyorlashda eng muhimi nima?', options: ['Tayyorlash tezligi', 'Ingredientlar sifati va STKga rioya qilish', 'Porsiyalar soni', 'Yorqin ko‘rinish'], correct: 1 },
+                        { question: 'Nima uchun taomning haroratini yuborishdan oldin tekshirish muhim?', options: ['Mehmon to‘g‘ri haroratdagi taom olishi uchun', 'Yetkazib berishni tezlashtirish uchun', 'O‘ramni tejash uchun', 'Bu sifatga ta’sir qilmaydi'], correct: 0 },
+                        { question: 'Har qanday bosqichda xatolik sezsangiz nima qilish kerak?', options: ['Hech kim ko‘rmasa o‘tkazib yuborish', 'Jarayonni to‘xtatib, tuzatish va ma’muriyatga xabar berish', 'Qanday bo‘lsa shunday jo‘natish, mehmon sezmaydi', 'Hammasi joyida deb ko‘rsatish'], correct: 1 }
+                    ],
+                    stepQuizzes: {
+                        povar: [
+                            { question: 'Qaysi omil taom sifatini nazorat qilishga kirmaydi?', options: ['Ingredientlarning yangiligi', 'O‘ram rangi', 'Retsepturaga rioya qilish', 'Berish harorati'], correct: 1 },
+                            { question: 'Tayyorlashda taomning ta’mini saqlashga nima yordam beradi?', options: ['Ko‘p sonli porsiyalar', 'Haroratni aniq saqlash', 'Tez berish', 'Yorqin bezak'], correct: 1 },
+                            { question: 'STK nima?', options: ['Termonazorat tizimi', 'Texnologik xarita standarti', 'Issiqlik bilan ishlash usuli', 'Maxsus termometr'], correct: 1 },
+                            { question: 'Qaysi harakat taomni berishdan oldin tekshirishga kirmaydi?', options: ['Og‘irlikni tekshirish', 'Tashqi ko‘rinishni baholash', 'Narxini tekshirish', 'To‘g‘ri o‘ram ishlatish'], correct: 2 },
+                            { question: 'Jamoada sifatni yaxshilashga nima yordam beradi?', options: ['Kichik xatolarga e’tibor bermaslik', 'Besh daqiqaliklar va muhokamalar', 'Ish tezligini oshirish', 'Porsiyalarni qisqartirish'], correct: 1 }
+                        ],
+                        shef: [
+                            { question: 'Bosh oshpazning sifat nazorati vazifalariga nima kiradi?', options: ['Faqat taom tayyorlash', 'Barcha jarayonlarni nazorat qilish va jamoani o‘qitish', 'Buyurtmalarni bezash', 'Taomlarni mehmonlarga yetkazib berish'], correct: 1 },
+                            { question: 'Nima uchun bosh oshpazning obro‘si restoran uchun muhim?', options: ['U eng mazali taomlarni tayyorlaydi', 'U barqaror sifat va mehmonlar ishonchini kafolatlaydi', 'U hammadan tez ishlaydi', 'U xaridlarga javobgar'], correct: 1 },
+                            { question: 'Qaysi vosita oshxonadagi sifatni boshqarishga kirmaydi?', options: ['Tekshirish ro‘yxatlari', 'Degustatsiyalar', 'Ijtimoiy tarmoqlar', 'Harorat nazorati'], correct: 2 },
+                            { question: 'Oshxonada tizimli xatolik aniqlanganda bosh oshpaz nima qilishi kerak?', options: ['Aybdorni jazolash', 'Sababni tahlil qilib, jamoani o‘qitish', 'Xodimni ishdan bo‘shatish', 'Muammoni yashirish'], correct: 1 },
+                            { question: 'Qaysi usul oshxonada sifat madaniyatini mustahkamlashga yordam beradi?', options: ['Xatolarni muhokama qilishni taqiqlash', 'Muntazam besh daqiqaliklar va tashabbusni rag‘batlantirish', 'Oshpazlarning yukini oshirish', 'Tayyorlash vaqtini qisqartirish'], correct: 1 }
+                        ],
+                        sbor: [
+                            { question: 'Yig‘uvchining vazifalariga nima kiradi?', options: ['Taom tayyorlash', 'Buyurtmalarni komplektlash va tashqi ko‘rinishni tekshirish', 'Buyurtmalarni mehmonlarga yetkazib berish', 'Mahsulot sotib olish'], correct: 1 },
+                            { question: 'Nima uchun buyurtmaning har bir pozitsiyasini tekshirish muhim?', options: ['Ishni tezlashtirish uchun', 'Komplektatsiyadagi xatolarni oldini olish va obro‘ni saqlash uchun', 'O‘ramni tejash uchun', 'Bu majburiy emas'], correct: 1 },
+                            { question: 'Yig‘uvchining tekshirish ro‘yxatida qaysi harakat ko‘rsatilmagan?', options: ['Issiq va sovuqning ajratilishini tekshirish', 'Taomning ta’mini baholash', 'O‘ram to‘g‘riligini tekshirish', 'Og‘irlikni solishtirish'], correct: 1 },
+                            { question: 'Yig‘uvchi xatolik sezsa nima qilish kerak?', options: ['E’tibor bermasdan davom ettirish', 'Jarayonni to‘xtatib, tuzatish va ma’muriyatga xabar berish', 'Buyurtmani shunday jo‘natish', 'Aybdorlikni boshqaga yuklash'], correct: 1 },
+                            { question: 'Yig‘uvchi ish sifatini qanday oshirishi mumkin?', options: ['Shubhalarga e’tibor bermaslik', 'Muhokamalarda qatnashish va har doim qayta tekshirish', 'Sifat hisobiga tezroq ishlash', 'Tekshiruvlar sonini qisqartirish'], correct: 1 }
+                        ],
+                        kurier: [
+                            { question: 'Kuryer uchun yetkazib berishdagi asosiy ustuvorlik nima? (barcha bandlar muhim, lekin asosiysini tanlang)', options: ['Harakat tezligi', 'Haroratni saqlash va aniqlik', 'Kuryerning tashqi ko‘rinishi', 'Barcha ko‘chalarni bilish'], correct: 1 },
+                            { question: 'Nima uchun buyurtmaning butun va sifatli yetkazib berilishi muhim?', options: ['Mehmon xafa bo‘lmasligi uchun', 'Mehmon noroziligini oldini olish va obro‘ni saqlash uchun', 'Rejani tez bajarish uchun', 'Choy olish uchun'], correct: 1 },
+                            { question: 'Nima uchun termosumkani tekshirish kerak?', options: ['Taomlarning haroratini saqlash uchun', 'Sumka yaxshi ko‘rinishi uchun', 'Sumka yengil bo‘lishi uchun', 'Kuryer xavfsizligi uchun'], correct: 0 },
+                            { question: 'Kechikish bo‘lsa, kuryer nima qilishi kerak?', options: ['Tezroq yurish', 'Mehmonga kontakt-markaz orqali xabar berish', 'Buyurtmani bekor qilish', 'Hech kimga aytmaslik'], correct: 1 },
+                            { question: 'Kuryerga restoran haqida taassurot qoldirishga nima yordam beradi?', options: ['Yetkazib berish tezligi', 'Iliq munosabat, aniqlik va buyurtmaga ehtiyotkorlik', 'Barcha ko‘chalarni bilish', 'Yorqin forma'], correct: 1 }
+                        ],
+                        manager: [
+                            { question: 'Menejerning sifatni ta’minlashdagi asosiy vazifasi nima?', options: ['Taom tayyorlash', 'Barcha bosqichlarni nazorat qilish va jarayonlarni tashkil etish', 'Buyurtmalarni yetkazib berish', 'Buxgalteriya yuritish'], correct: 1 },
+                            { question: 'Nima uchun sifat mehmonlarning sodiqligiga ta’sir qiladi?', options: ['Chunki mehmonlar ko‘proq to‘laydi', 'Chunki sifat ishonch va qaytib kelishni yaratadi', 'Chunki sifat ish tezligini oshiradi', 'Chunki sifat xarajatlarni tejaydi'], correct: 1 },
+                            { question: 'Qaysi vosita menejerga shikoyatlar bilan tizimli ishlashga yordam beradi?', options: ['Shikoyatlarni e’tiborsiz qoldirish', 'Har bir shikoyatni tahlil qilish va sabablarni bartaraf etish', 'Mas’uliyatni kuryerlarga yuklash', 'Yetkazib berish tezligini oshirish'], correct: 1 },
+                            { question: 'Tizimli xatolik aniqlanganda menejer nima qilishi kerak?', options: ['Aybdorni jazolash', 'Tekshirish ro‘yxatlarini joriy qilish va jamoa bilan muhokama qilish', 'Hammasini ishdan bo‘shatish', 'Muammoni yashirish'], correct: 1 },
+                            { question: 'Menejer jamoada sifat madaniyatini qanday mustahkamlashi mumkin?', options: ['Muhokamalar o‘tkazish va tashabbusni rag‘batlantirish', 'Jarimalarni ko‘paytirish', 'Tekshirish vaqtini qisqartirish', 'Kichik xatolarga e’tibor bermaslik'], correct: 0 }
+                        ],
+                        director: [
+                            { question: 'Direktor uchun sifat nima uchun biznes strategiyasi hisoblanadi?', options: ['Chunki bu go‘zal so‘z', 'Chunki sifat obro‘ va daromadni belgilaydi', 'Chunki bu yetkazib beruvchilarning talabi', 'Chunki bu moda'], correct: 1 },
+                            { question: 'Brendga ishonchni nima yaratishga yordam beradi?', options: ['Reklama', 'Barqaror sifat va standartlarga rioya qilish', 'Ko‘p sonli taomlar', 'Arzon narxlar'], correct: 1 },
+                            { question: 'Direktor sifat bo‘yicha tizimli ishlash uchun nimadan foydalanishi kerak?', options: ['Yagona standartlar va o‘qitish tizimi', 'Bir martalik aksiyalar', 'Faqat narx nazorati', 'Assortimentni ko‘paytirish'], correct: 0 },
+                            { question: 'Direktor tarmoqda sifatga qanday ta’sir qilishi mumkin?', options: ['Faqat moliyani nazorat qilish', 'Ma’lumotlarni tahlil qilish va eng yaxshi tajribalarni joriy qilish', 'Narxlarni doimiy oshirish', 'Shtatni qisqartirish'], correct: 1 },
+                            { question: 'Direktorga barqaror sifat madaniyatini yaratishga nima yordam beradi?', options: ['Yetakchilarni rivojlantirish va doimiy o‘qitish', 'Faqat shaxsiy nazorat', 'Qattiq intizom', 'O‘qitishga tejash'], correct: 0 }
+                        ]
+                    }
                 },
-                shef: {
-                    label: 'Шеф-повар',
-                    emoji: '🧑‍🍳',
-                    steps: [
-                        { 
-                            title: 'Ты — лидер качества на кухне',
-                            content: `<p>Ты отвечаешь за стандарты всей кухни. Качество каждого блюда — зона твоей ответственности.</p>
-                                <div class="step-highlight">🔥 <strong>Твоя миссия:</strong> контролировать процессы, обучать команду и быть примером.</div>
-                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами и ответь себе сам:</strong></div>
-                                <ul class="step-list">
-                                    <li>Как ты оцениваешь работу поваров?</li>
-                                    <li>Какие инструменты контроля ты используешь?</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Что входит в обязанности шеф-повара по контролю качества?',
-                                options: ['Только приготовление блюд', 'Контроль всех процессов и обучение команды', 'Оформление заказов', 'Доставка блюд гостям'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Репутация и доверие',
-                            content: `<p>Твоё имя связывают с качеством. Гости доверяют бренду, потому что ты гарантируешь вкус.</p>
-                                <div class="step-highlight">💡 <strong>Личная мотивация:</strong> гордиться каждым блюдом, выходящим с кухни.</div>
-                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div>
-                                <ul class="step-list">
-                                    <li>Как ты вдохновляешь команду на качество?</li>
-                                    <li>Что для тебя значит «идеальный заказ»?</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Почему репутация шеф-повара важна для ресторана?',
-                                options: ['Потому что он готовит самые вкусные блюда', 'Потому что он гарантирует стабильное качество и доверие гостей', 'Потому что он быстрее всех работает', 'Потому что он отвечает за закупки'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Управление качеством',
-                            content: `<p>Ты должен владеть:</p>
-                                <ul class="step-list">
-                                    <li><strong>СТК</strong> — контроль исполнения.</li>
-                                    <li><strong>Дегустации</strong> — лично пробуй и сравнивай с эталоном.</li>
-                                    <li><strong>Санитария</strong> — чистота кухни и оборудования.</li>
-                                    <li><strong>Температура</strong> — от холодильника до термосумки.</li>
-                                </ul>
-                                <div class="step-highlight">📋 Используй чек-листы контроля на каждой смене.</div>`,
-                            quiz: {
-                                question: 'Какой инструмент НЕ относится к управлению качеством на кухне?',
-                                options: ['Чек-листы', 'Дегустации', 'Социальные сети', 'Контроль температуры'],
-                                correct: 2
-                            }
-                        },
-                        { 
-                            title: 'Наставничество и аудит',
-                            content: `<p>Проведи аудит своей кухни:</p>
-                                <ul class="step-list">
-                                    <li>✅ Проверь соблюдение СТК у каждого повара.</li>
-                                    <li>✅ Организуй дегустацию и обсуди результаты.</li>
-                                    <li>✅ Убедись, что весы и термометры работают корректно.</li>
-                                </ul>
-                                <div class="step-highlight">📢 Обучай команду — делитесь стандартами и фиксируйте ошибки.</div>`,
-                            quiz: {
-                                question: 'Что должен делать шеф-повар при обнаружении системной ошибки на кухне?',
-                                options: ['Наказать виновного', 'Разобрать причину и обучить команду', 'Уволить сотрудника', 'Замолчать проблему'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Культура качества',
-                            content: `<p>Создай систему, где качество — норма жизни:</p>
-                                <ul class="step-list">
-                                    <li>Ежедневные пятиминутки с разбором.</li>
-                                    <li>Поощряй тех, кто замечает и исправляет нарушения.</li>
-                                    <li>Внедряй «золотые стандарты» на кухне.</li>
-                                </ul>
-                                <div class="step-highlight">🌟 Ты — главный хранитель качества. От тебя зависит репутация.</div>`,
-                            quiz: {
-                                question: 'Какой метод помогает закрепить культуру качества на кухне?',
-                                options: ['Запрет на обсуждение ошибок', 'Регулярные пятиминутки и поощрение инициативы', 'Увеличение нагрузки на поваров', 'Сокращение времени приготовления'],
-                                correct: 1
-                            }
-                        }
-                    ]
+                tg: {
+                    name: 'Тоҷикӣ',
+                    appTitle: '🍽️ Академия',
+                    langTitle: 'Забонро интихоб кунед',
+                    langSub: 'Таълим бо забони интихобшуда гузаронида мешавад',
+                    welcomeTitle: 'Академия<br><span>сифат</span>',
+                    welcomeSub: 'Микроомӯзиш барои дастаи ресторанҳои расонидани таом',
+                    tag1: '#сифат',
+                    tag2: '#даста',
+                    tag3: '#меҳмон',
+                    feat1: '🎯6 қадам',
+                    feat2: '⭐Нишон',
+                    feat3: '📚Аз рӯи нақшҳо',
+                    startBtn: '🚀 Оғози таълим',
+                    welcomeDuration: '~ 7 дақиқа · барои ҳамаи вазифаҳо',
+                    roleTitle: 'Дар даста ки ҳастӣ?',
+                    roleSub: 'Барои оғози таълим нақши худро интихоб кунед. Ҳар модул ба вазифаҳои шумо мутобиқ карда шудааст.',
+                    roleFooter: 'Таълим бар принсипҳои сифат ва масъулияти даставӣ асос ёфтааст',
+                    backToWelcome: '← Ба саҳифаи асосӣ',
+                    stepCounterLabel: 'Қадам',
+                    prevBtn: '← Бозгашт',
+                    nextBtn: 'Пеш →',
+                    finishBtn: '🏁 Анҷом додан ва нишон гирифтан',
+                    finishTitle: 'Ту — Посбони Сифат!',
+                    finishBadge: 'Нишон «Устоди сифат»',
+                    finishDesc: 'Шумо омӯзишро аз рӯи стандартҳои сифат барои нақши худ гузаронидед. Ҳар рӯз — саҳми шумо дар меҳмони қаноатманд.',
+                    finishNextTitle: '📌 Баъд чӣ?',
+                    finishNext1: '✔ Дар ҳар смена донишҳоро татбиқ кунед',
+                    finishNext2: '✔ Дар панҷдақиқаҳо ширкат варзида, таҷриба мубодила кунед',
+                    finishNext3: '✔ Сифатро бо даста назорат кунед',
+                    resetBtn: '🔄 Аз нав гузаштан',
+                    finishToWelcome: '🏠 Ба саҳифаи асосӣ',
+                    roles: { povar: 'Ошпаз', shef: 'Ошпази сар', sbor: 'Ҷамъкунанда', kurier: 'Курьер', manager: 'Менеҷер', director: 'Директор' },
+                    steps: {
+                        povar: [
+                            { title: 'Сифат — имзои ту', content: `<p>Ҳар таом — чеҳраи ресторан. Меҳмон мазза, сохт ва ҳароратро ҳис мекунад.</p><div class="step-highlight">🔥 <strong>Вазифаи ту:</strong> дақиқ тибқи СТК пухтан, риояи рецептура ва назорати намуди зоҳирӣ.</div><div class="reflection-block"><strong>🤔 Дар бораи ин саволҳо фикр кун ва ба худ посух деҳ:</strong></div><ul class="step-list"><li>Чаро сифати компонентҳо ба мазза таъсир мерасонад?</li><li>Ҳарорати пухтан сохторро чӣ гуна нигоҳ медорад?</li><li>«Презентабелӣ» чӣ маъно дорад?</li></ul>` },
+                            { title: 'Меҳмон моро барои мазза интихоб мекунад', content: `<p>Вақте ки ту дар таом ҷони худро мегузорӣ, меҳмон онро ҳис мекунад. Меҳнати ту — сабаби асосии баргаштани одамон.</p><div class="step-highlight">💡 <strong>Манфиати шахсӣ:</strong> ифтихор аз кор, камтар баргардондан, бештар сипосгузорӣ.</div><div class="reflection-block"><strong>🤔 Фикр кун:</strong></div><ul class="step-list"><li>Тасаввур кун, ки ин таом барои оилаи туст.</li><li>Чӣ гуна таъриф шунидан мехоҳед?</li></ul>` },
+                            { title: 'Стандартҳо ва воситаҳо', content: `<p>Ту бояд донӣ:</p><ul class="step-list"><li><strong>СТК</strong> — харитаҳои технологӣ барои ҳар таом.</li><li><strong>Дегустатсия</strong> — дар ҳафта 2 маротиба мазза ва намуди зоҳирӣ санҷида мешавад.</li><li><strong>Назорати вазн</strong> — ҳар таом баркашида мешавад.</li><li><strong>Реҷаи ҳарорат</strong> — таоми гарм бояд гарм бошад.</li></ul><div class="step-highlight">📚 Ҳама стандартҳо дар Motiviti (СТК).</div>` },
+                            { title: 'Амалия — санҷиши сифат', content: `<p>Акнун ту барои татбиқи дониш омода ҳастӣ:</p><ul class="step-list"><li>✅ Вазни порсияро санҷ — каҷравии раво нест.</li><li>✅ Намуди зоҳириро баҳо де — дақиқӣ ва мавҷудияти ҳама компонентҳо.</li><li>✅ Боварӣ ҳосил кун, ки бастаи дуруст истифода шудааст.</li></ul><div class="step-highlight">⚡ <strong>Маслиҳат:</strong> пеш аз додан таомро бо чашми меҳмон санҷ.</div>` },
+                            { title: 'Ҳар рӯз — қадаме ба сӯи комилӣ', content: `<p>Сифат — ин одат. Дар сменаи худ ҷорӣ кун:</p><ul class="step-list"><li>Дар <strong>панҷдақиқаҳо</strong> ширкат варз — хатоҳо ва муваффақиятҳоро муҳокима кунед.</li><li>Агар вайронкунӣ пай бурдед, аз нав кор кардан натарсед.</li><li>Таҷриба бо ҳамкорон мубодила кунед.</li></ul><div class="step-highlight">🌟 Ёд дошта бошед: меҳмони қаноатманд — натиҷаи меҳнати шумо.</div>` }
+                        ],
+                        shef: [
+                            { title: 'Ту — пешвои сифат дар ошхона', content: `<p>Ту барои стандартҳои тамоми ошхона масъул ҳастӣ. Сифати ҳар таом — минтақаи масъулияти ту.</p><div class="step-highlight">🔥 <strong>Миссияи ту:</strong> назорати равандҳо, омӯзиши даста ва ибрат будан.</div><div class="reflection-block"><strong>🤔 Дар бораи ин саволҳо фикр кун ва ба худ посух деҳ:</strong></div><ul class="step-list"><li>Кори ошпазҳоро чӣ гуна баҳо медиҳӣ?</li><li>Кадом воситаҳои назоратро истифода мекунӣ?</li></ul>` },
+                            { title: 'Эътибор ва эътимод', content: `<p>Номи ту бо сифат алоқаманд аст. Меҳмонон ба бренд бовар мекунанд, зеро ту кафолати мазза медиҳӣ.</p><div class="step-highlight">💡 <strong>Ангезаи шахсӣ:</strong> ба ҳар таоме, ки аз ошхона мебарояд, ифтихор кардан.</div><div class="reflection-block"><strong>🤔 Фикр кун:</strong></div><ul class="step-list"><li>Дастаро ба сифат чӣ гуна илҳом мебахшед?</li><li>«Фармоиши идеалӣ» барои ту чӣ маъно дорад?</li></ul>` },
+                            { title: 'Идоракунии сифат', content: `<p>Ту бояд донӣ:</p><ul class="step-list"><li><strong>СТК</strong> — назорати иҷро.</li><li><strong>Дегустатсия</strong> — худат бичашед ва бо эталон муқоиса кунед.</li><li><strong>Санитария</strong> — тозагии ошхона ва таҷҳизот.</li><li><strong>Ҳарорат</strong> — аз яхдон то халтаи гармидиҳанда.</li></ul><div class="step-highlight">📋 Дар ҳар смена рӯйхати санҷишро истифода баред.</div>` },
+                            { title: 'Роҳнамонӣ ва аудит', content: `<p>Аудити ошхонаи худро гузаронед:</p><ul class="step-list"><li>✅ Риояи СТК-ро аз ҷониби ҳар ошпаз санҷед.</li><li>✅ Дегустатсия ташкил кунед ва натиҷаҳоро муҳокима намоед.</li><li>✅ Боварӣ ҳосил кунед, ки тарозу ва термометрҳо дуруст кор мекунанд.</li></ul><div class="step-highlight">📢 Дастаро омӯзонед — стандартҳоро мубодила кунед ва хатоҳоро сабт намоед.</div>` },
+                            { title: 'Фарҳанги сифат', content: `<p>Системае эҷод кунед, ки сифат ҳаёти маъмулӣ бошад:</p><ul class="step-list"><li>Ҳар рӯз панҷдақиқаҳо гузаронед.</li><li>Онҳоеро, ки вайронкуниҳоро пай мебаранд ва ислоҳ мекунанд, ҳавасманд кунед.</li><li>Дар ошхона «стандартҳои тиллоӣ»-ро ҷорӣ кунед.</li></ul><div class="step-highlight">🌟 Ту — нигаҳбони асосии сифат. Эътибор аз ту вобаста аст.</div>` }
+                        ],
+                        sbor: [
+                            { title: 'Ҷамъоварӣ — зарбаи охирин', content: `<p>Ту фармоишро, ки меҳмон хоҳад дид, тартиб медиҳӣ. Аз дақиқии ту таассуроти аввал вобаста аст.</p><div class="step-highlight">🔥 <strong>Вазифаи ту:</strong> пурраги, намуди зоҳирӣ ва нигоҳдории ҳарорат.</div><div class="reflection-block"><strong>🤔 Фикр кун:</strong></div><ul class="step-list"><li>Чаро санҷидани ҳар мавқеъ муҳим аст?</li><li>Бастабандӣ ба қабули таом чӣ гуна таъсир мерасонад?</li></ul>` },
+                            { title: 'Ифтихор ба ҳар ҷамъоварии фармоиш', content: `<p>Вақте ки меҳмон фармоишро мекушояд ва ҷамъоварии идеалиро мебинад — ин сазовори туст.</p><div class="step-highlight">💡 <strong>Манфиати шахсӣ:</strong> ҳадди ақали шикоят, ҳадди аксари сипос.</div><div class="reflection-block"><strong>🤔 Фикр кун:</strong></div><ul class="step-list"><li>Тасаввур кун, ки фармоиш ба ту мерасад. Чӣ дидан мехоҳед?</li></ul>` },
+                            { title: 'Рӯйхати санҷиши ҷамъкунанда', content: `<ul class="step-list"><li><strong>Намуди зоҳирӣ</strong> — дақиқӣ, мавҷудияти ҳама компонентҳо.</li><li><strong>Ҷудосозӣ</strong> — гарм ва сард бо Қуттии меҳмон ҷудо карда шудааст.</li><li><strong>Баста</strong> — контейнери дуруст, герметикӣ пӯшида.</li><li><strong>Вазн</strong> — агар шубҳа дошта бошед, дубора санҷед, бо меъёр муқоиса кунед.</li><li><strong>Мавҷудият</strong> — ҳама мавқеъҳо тибқи варақа.</li></ul><div class="step-highlight">📋 Пеш аз фиристодан худро ду маротиба санҷед.</div>` },
+                            { title: 'Назорати сифат дар хат', content: `<p>Марҳилаи амалӣ:</p><ul class="step-list"><li>✅ Фармоишро бо варақа ва стикерҳо муқоиса кунед.</li><li>✅ Боварӣ ҳосил кунед, ки ашёи бегона вуҷуд надорад.</li><li>✅ Бутунии бастаро санҷед.</li><li>✅ Гарм ва сардро ҷудо кунед.</li></ul><div class="step-highlight">⚡ Агар вайронкунӣ пайдо кардед — равандро боздоред ва ислоҳ кунед.</div>` },
+                            { title: 'Ҳар сония — сифат', content: `<p>Назоратро ба одати худ табдил диҳед:</p><ul class="step-list"><li>Дар панҷдақиқаҳо ширкат варзед.</li><li>Агар шубҳа дошта бошед — дубора санҷед.</li><li>Дар бораи вайронкуниҳо ошкоро сухан гӯед.</li></ul><div class="step-highlight">🌟 Ҷамъоварии ту — чеҳраи ресторан барои меҳмон аст.</div>` }
+                        ],
+                        kurier: [
+                            { title: 'Ту — мили ниҳоии сифат', content: `<p>Меҳмон фармоишро интизори аст, ва ту — пайванди ӯ бо ресторан. Ҳарорат ва дақиқӣ дар дасти ту.</p><div class="step-highlight">🔥 <strong>Вазифаи ту:</strong> таомро гарм, бутун ва сари вақт расонидан.</div><div class="reflection-block"><strong>🤔 Фикр кун:</strong></div><ul class="step-list"><li>Ҳарорат ба мазза чӣ гуна таъсир мерасонад?</li><li>«Расонидани эҳтиёткорона» чӣ маъно дорад?</li></ul>` },
+                            { title: 'Табассуми меҳмон — мукофоти ту', content: `<p>Вақте ки меҳмон дарро мекушояд ва фармоиши идеалиро мегирад — ту ба ӯ шодӣ мебахшӣ.</p><div class="step-highlight">💡 <strong>Ангезаи шахсӣ:</strong> дар кори худ беҳтарин будан.</div><div class="reflection-block"><strong>🤔 Фикр кун:</strong></div><ul class="step-list"><li>Чӣ гуна мехоҳед, ки ба шумо бирасонанд?</li></ul>` },
+                            { title: 'Ҳарорат ва санитария', content: `<ul class="step-list"><li><strong>Халтаи термо</strong> — тоза, маҳкам пӯшида.</li><li><strong>Гарм → гарм, сард → сард.</strong></li><li><strong>Дақиқӣ</strong> — фармоишҳоро барнагардонед.</li><li><strong>Тозагӣ</strong> — пас аз ҳар смена халтаҳоро бишӯед.</li></ul><div class="step-highlight">📋 Пеш аз баромадан халтаи терморо санҷед (хладогенҳо, гармкунаки пицца).</div>` },
+                            { title: 'Санҷиш пеш аз баромад', content: `<p>Алгоритмро риоя кунед:</p><ul class="step-list"><li>✅ Тозагӣ ва герметикии халтаро санҷед.</li><li>✅ Боварӣ ҳосил кунед, ки фармоиш дуруст баста шудааст.</li><li>✅ Маршрутро риоя кунед — дер накунед.</li></ul><div class="step-highlight">⚡ Дар сурати дермондан — тавассути Маркази тамос ба меҳмон хабар диҳед.</div>` },
+                            { title: 'Расонидан — ин хизматрасонӣ аст', content: `<p>Касбӣ бошед:</p><ul class="step-list"><li>Ҳамеша халтаи терморо санҷед.</li><li>Ба фармоиши меҳмон эҳтиёткор бошед.</li><li>Бо меҳмон хушмуомилагӣ кунед.</li></ul><div class="step-highlight">🌟 Ҳар километр — саҳме дар эътимод.</div>` }
+                        ],
+                        manager: [
+                            { title: 'Сифат — KPI-и асосии ту', content: `<p>Ту барои равандҳо ва даста масъул ҳастӣ. Сифат — натиҷаи ташкили ту.</p><div class="step-highlight">🔥 <strong>Нақши ту:</strong> назорати ҳама марҳилаҳо, аз ошхона то расонидан.</div><div class="reflection-block"><strong>🤔 Фикр кун:</strong></div><ul class="step-list"><li>Сифатро дар ҳар участка чӣ гуна баҳо медиҳӣ?</li><li>Кадом воситаҳои назорат доред?</li></ul>` },
+                            { title: 'Эътибор ва садоқат', content: `<p>Меҳмонони қаноатманд — рушд ва устуворӣ. Ту системае месозӣ, ки дар он сифат меъёр аст.</p><div class="step-highlight">💡 <strong>Манфиати шахсӣ:</strong> ифтихор ба даста ва ресторан.</div>` },
+                            { title: 'Идоракунии сифат', content: `<ul class="step-list"><li><strong>Стандартҳо</strong> — Motiviti, Oboi.</li><li><strong>Аудит</strong> — санҷиши ҳама марҳилаҳо.</li><li><strong>Шикоятҳо</strong> — таҳлили системавӣ ва бартараф кардани сабабҳо.</li><li><strong>Панҷдақиқаҳо</strong> — ҳамоҳангсозии даста.</li></ul>` },
+                            { title: 'Ташкили назорат', content: `<p>Дар кор истифода баред:</p><ul class="step-list"><li>✅ Рӯйхатҳои санҷиш.</li><li>✅ Таҳлили шикоятҳо бидуни эҳсосот, танҳо далелҳо.</li><li>✅ Кормандониро барои эскорт ва ислоҳот ҳавасманд кунед.</li></ul>` },
+                            { title: 'Фарҳанги сифат дар даста', content: `<p>Сифатро афзалият гардонед:</p><ul class="step-list"><li>Мунтазам панҷдақиқаҳо гузаронед.</li><li>Системаи «Посбони сифат»-ро ҷорӣ кунед.</li><li>Динамикаро назорат кунед ва равандҳоро ислоҳ намоед.</li></ul>` }
+                        ],
+                        director: [
+                            { title: 'Сифат — стратегияи тиҷорат', content: `<p>Ту фарҳанги сифатро дар тамоми шабака ташаккул медиҳӣ. Ин асоси эътибор ва фоида аст.</p><div class="step-highlight">🔥 <strong>Вазифаи ту:</strong> манзараи умумиро дидан ва шароит барои сифат фароҳам кардан.</div>` },
+                            { title: 'Бренде, ки ба он эътимод доранд', content: `<p>Сифат садоқати меҳмонон ва устувории бизнесро муайян мекунад.</p><div class="step-highlight">💡 <strong>Миссияи шахсӣ:</strong> брендро ба эталони сифат табдил додан.</div>` },
+                            { title: 'Стратегияи сифат', content: `<ul class="step-list"><li><strong>Стандартҳо</strong> — ягона барои тамоми шабака.</li><li><strong>Омӯзиш</strong> — рушди доимии даста.</li><li><strong>Бозхурд</strong> — кор бо шикоятҳо ва беҳбудиҳо.</li><li><strong>Ҳавасмандкунӣ</strong> — мукофот барои сифат.</li></ul>` },
+                            { title: 'Идоракунии тағйирот', content: `<p>Беҳбудиҳои системавиро ҷорӣ кунед:</p><ul class="step-list"><li>✅ Бозхурд ва нишондиҳандаҳоро таҳлил кунед.</li><li>✅ Амалияҳои беҳтаринро дар ресторан ҷорӣ кунед.</li><li>✅ Бо намунаи шахсӣ аҳамияти сифатро нишон диҳед.</li></ul>` },
+                            { title: 'Мероси сифат', content: `<p>Системае созед, ки бе ту кор кунад:</p><ul class="step-list"><li>Дар ҳар ресторан пешвоёни сифатро инкишоф диҳед.</li><li>Стандартҳоро истифода баред ва иҷрои онҳоро назорат кунед.</li><li>Ба омӯзиш ва фарҳанг сармоягузорӣ кунед.</li></ul>` }
+                        ]
+                    },
+                    finalQuiz: [
+                        { question: 'Ҳангоми пухтан чи муҳимтарин аст?', options: ['Суръати пухтан', 'Сифати компонентҳо ва риояи СТК', 'Миқдори порсияҳо', 'Намуди зоҳирии дурахшон'], correct: 1 },
+                        { question: 'Чаро пеш аз фиристодан ҳарорати таомро санҷидан муҳим аст?', options: ['То меҳмон таоми ҳарорати дуруст гирад', 'Барои суръат бахшидан ба расонидан', 'Барои сарфаи баста', 'Ин ба сифат таъсир намерасонад'], correct: 0 },
+                        { question: 'Агар дар ягон марҳила вайронкунӣ пай бурдед, чӣ кор кардан лозим?', options: ['Агар касе набинад, гузаштан', 'Равандро боздоштан ва ислоҳ карда, ба маъмурият хабар додан', 'Ҳамон тавр фиристодан, меҳмон пай намебарад', 'Худро ба он додан, ки ҳама чиз тартиб аст'], correct: 1 }
+                    ],
+                    stepQuizzes: {
+                        povar: [
+                            { question: 'Кадом омил ба назорати сифати таом дахл надорад?', options: ['Тозагии компонентҳо', 'Ранги баста', 'Риояи рецептура', 'Ҳарорати додан'], correct: 1 },
+                            { question: 'Ҳангоми пухтан чи ба нигоҳ доштани маззаи таом кӯмак мекунад?', options: ['Миқдори зиёди порсияҳо', 'Риояи дақиқи ҳарорат', 'Додани зуд', 'Ороиши дурахшон'], correct: 1 },
+                            { question: 'СТК чист?', options: ['Системаи термоназорат', 'Стандарти харитаи технологӣ', 'Усули коркарди гармӣ', 'Термометри махсус'], correct: 1 },
+                            { question: 'Кадом амал ба санҷиши таом пеш аз додан дохил нест?', options: ['Санҷиши вазн', 'Баҳодиҳии намуди зоҳирӣ', 'Санҷиши нарх', 'Истифодаи бастаи дуруст'], correct: 2 },
+                            { question: 'Ба беҳтар кардани сифат дар даста чӣ кӯмак мекунад?', options: ['Беэътиноӣ ба хатоҳои хурд', 'Панҷдақиқаҳо ва муҳокимаҳо', 'Афзоиши суръати кор', 'Кам кардани порсияҳо'], correct: 1 }
+                        ],
+                        shef: [
+                            { question: 'Ба вазифаҳои ошпази сар оид ба назорати сифат чӣ дохил мешавад?', options: ['Танҳо пухтани таом', 'Назорати ҳама равандҳо ва омӯзиши даста', 'Ороиши фармоишҳо', 'Расонидани таом ба меҳмонон'], correct: 1 },
+                            { question: 'Чаро эътибори ошпази сар барои ресторан муҳим аст?', options: ['Зеро ӯ таомҳои болаззат мепазад', 'Зеро ӯ сифати устувор ва эътимоди меҳмононро кафолат медиҳад', 'Зеро ӯ аз ҳама тезтар кор мекунад', 'Зеро ӯ ба харид масъул аст'], correct: 1 },
+                            { question: 'Кадом восита ба идоракунии сифат дар ошхона дахл надорад?', options: ['Рӯйхати санҷиш', 'Дегустатсия', 'Шабакаҳои иҷтимоӣ', 'Назорати ҳарорат'], correct: 2 },
+                            { question: 'Ҳангоми пайдо шудани хатои системавӣ дар ошхона ошпази сар чӣ кор бояд кунад?', options: ['Ҷазо додан ба гунаҳкор', 'Сабабро таҳлил карда, дастаро омӯзондан', 'Кормандеро боз хориҷ кардан', 'Муамморо пинҳон кардан'], correct: 1 },
+                            { question: 'Кадом усул ба мустаҳкам кардани фарҳанги сифат дар ошхона кӯмак мекунад?', options: ['Манъи муҳокимаи хатоҳо', 'Панҷдақиқаҳои мунтазам ва ҳавасмандкунии ташаббус', 'Афзоиши бори ошпазҳо', 'Кам кардани вақти пухтан'], correct: 1 }
+                        ],
+                        sbor: [
+                            { question: 'Ба вазифаҳои ҷамъкунанда чӣ дохил мешавад?', options: ['Пухтани таом', 'Комплект кардани фармоишҳо ва санҷиши намуди зоҳирӣ', 'Расонидани фармоишҳо ба меҳмонон', 'Харидани маҳсулот'], correct: 1 },
+                            { question: 'Чаро санҷидани ҳар мавқеи фармоиш муҳим аст?', options: ['Барои тезонидани кор', 'Барои пешгирии хатоҳо дар комплект ва нигоҳ доштани эътибор', 'Барои сарфаи баста', 'Ин ҳатмӣ нест'], correct: 1 },
+                            { question: 'Кадом амал дар рӯйхати санҷиши ҷамъкунанда нишон дода нашудааст?', options: ['Санҷиши ҷудосозии гарм ва сард', 'Баҳодиҳии маззаи таом', 'Санҷиши дурустии баста', 'Муқоисаи вазн'], correct: 1 },
+                            { question: 'Агар ҷамъкунанда вайронкуниро пай барад, чӣ кор кардан лозим?', options: ['Беэътиноӣ карда, давом додан', 'Равандро боздоштан ва ислоҳ карда, ба маъмурият хабар додан', 'Фармоишро ҳамон тавр фиристодан', 'Гуноҳро ба дигаре бор кардан'], correct: 1 },
+                            { question: 'Ҷамъкунанда чӣ гуна метавонад сифати кори худро баланд барад?', options: ['Беэътиноӣ ба шубҳаҳо', 'Ширкат дар муҳокимаҳо ва ҳамеша дубора санҷидан', 'Кор кардан тезтар ба ҳисоби сифат', 'Кам кардани шумораи санҷишҳо'], correct: 1 }
+                        ],
+                        kurier: [
+                            { question: 'Барои курьер дар расонидан авлавияти асосӣ чист? (ҳама бандаҳо муҳиманд, аммо асосиро интихоб кунед)', options: ['Суръати ҳаракат', 'Нигоҳ доштани ҳарорат ва дақиқӣ', 'Намуди зоҳирии курьер', 'Донистани ҳама кӯчаҳо'], correct: 1 },
+                            { question: 'Чаро муҳим аст, ки фармоиш бутун ва бо сифат расонида шавад?', options: ['То меҳмон ранҷ накашад', 'Барои пешгирии норозигии меҳмон ва нигоҳ доштани эътибор', 'Барои зуд иҷро кардани нақша', 'Барои гирифтани пули чай'], correct: 1 },
+                            { question: 'Чаро халтаи терморо санҷидан лозим?', options: ['Барои нигоҳ доштани ҳарорати таом', 'Барои халта беҳтар ба назар расад', 'Барои халта сабуктар бошад', 'Барои бехатарии курьер'], correct: 0 },
+                            { question: 'Дар сурати дермондан курьер чӣ кор бояд кунад?', options: ['Тезтар рафтан', 'Ба меҳмон тавассути маркази тамос хабар додан', 'Бекор кардани фармоиш', 'Ба касе нагуфтан'], correct: 1 },
+                            { question: 'Чӣ ба курьер барои эҷоди таассурот дар бораи ресторан кӯмак мекунад?', options: ['Суръати расонидан', 'Муомилаи самимӣ, дақиқӣ ва муносибати эҳтиёткорона ба фармоиш', 'Донистани ҳама кӯчаҳо', 'Формаи дурахшон'], correct: 1 }
+                        ],
+                        manager: [
+                            { question: 'Вазифаи асосии менеҷер дар таъмини сифат чист?', options: ['Пухтани таом', 'Назорати ҳама марҳилаҳо ва ташкили равандҳо', 'Расонидани фармоишҳо', 'Бурдани бухгалтерӣ'], correct: 1 },
+                            { question: 'Чаро сифат ба садоқати меҳмонон таъсир мерасонад?', options: ['Азбаски меҳмонон бештар мепардозанд', 'Азбаски сифат эътимод ва хоҳиши баргаштанро эҷод мекунад', 'Азбаски сифат суръати корро зиёд мекунад', 'Азбаски сифат хароҷотро сарфа мекунад'], correct: 1 },
+                            { question: 'Кадом восита ба менеҷер барои кори системавӣ бо шикоятҳо кӯмак мекунад?', options: ['Беэътиноӣ ба шикоятҳо', 'Таҳлили ҳар шикоят ва бартараф кардани сабабҳо', 'Гузаронидани масъулият ба курьерҳо', 'Афзоиши суръати расонидан'], correct: 1 },
+                            { question: 'Ҳангоми пайдо шудани хатои системавӣ менеҷер чӣ кор бояд кунад?', options: ['Ҷазо додан ба гунаҳкор', 'Ҷорӣ кардани рӯйхати санҷиш ва гузаронидани муҳокима бо даста', 'Ҳамаро боз хориҷ кардан', 'Пинҳон кардани муаммо'], correct: 1 },
+                            { question: 'Менеҷер чӣ гуна метавонад фарҳанги сифатро дар даста мустаҳкам кунад?', options: ['Гузаронидани муҳокимаҳо ва ҳавасмандкунии ташаббус', 'Зиёд кардани ҷаримаҳо', 'Кам кардани вақти санҷиш', 'Беэътиноӣ ба вайронкуниҳои хурд'], correct: 0 }
+                        ],
+                        director: [
+                            { question: 'Чаро сифат стратегияи бизнес барои директор аст?', options: ['Азбаски ин калимаи зебост', 'Азбаски сифат эътибор ва фоидаро муайян мекунад', 'Азбаски ин талаби таъминкунандагон аст', 'Азбаски ин мӯд аст'], correct: 1 },
+                            { question: 'Чӣ ба эҷоди эътимод ба бренд кӯмак мекунад?', options: ['Таблиғот', 'Сифати устувор ва риояи стандартҳо', 'Миқдори зиёди таомҳо', 'Нархҳои паст'], correct: 1 },
+                            { question: 'Директор барои кори системавӣ оид ба сифат аз чӣ истифода бояд кунад?', options: ['Стандартҳои ягона ва системаи омӯзиш', 'Аксияҳои якдафъаина', 'Танҳо назорати нарх', 'Афзоиши ассортимент'], correct: 0 },
+                            { question: 'Директор чӣ гуна метавонад ба сифат дар шабака таъсир расонад?', options: ['Танҳо назорати молия', 'Таҳлили маълумот ва ҷорӣ кардани амалияҳои беҳтарин', 'Паст кардани нархҳо', 'Кам кардани штат'], correct: 1 },
+                            { question: 'Ба директор барои эҷоди фарҳанги устувори сифат чӣ кӯмак мекунад?', options: ['Рушди пешвоён ва омӯзиши доимӣ', 'Танҳо назорати шахсӣ', 'Интизоми сахт', 'Сарфа ба омӯзиш'], correct: 0 }
+                        ]
+                    }
                 },
-                sbor: {
-                    label: 'Сборщик',
-                    emoji: '📦',
-                    steps: [
-                        { 
-                            title: 'Сборка — последний штрих',
-                            content: `<p>Ты формируешь заказ, который увидит гость. От твоей аккуратности зависит первое впечатление.</p>
-                                <div class="step-highlight">🔥 <strong>Твоя задача:</strong> полная комплектация, внешний вид и сохранение температуры.</div>
-                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div>
-                                <ul class="step-list">
-                                    <li>Почему важно проверять каждую позицию?</li>
-                                    <li>Как упаковка влияет на восприятие блюда?</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Что входит в обязанности сборщика?',
-                                options: ['Готовить блюда', 'Комплектовать заказы и проверять внешний вид', 'Доставлять заказы гостям', 'Закупать продукты'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Гордость за каждую комплектовку заказа.',
-                            content: `<p>Когда гость открывает заказ и видит идеальную сборку — это твоя заслуга.</p>
-                                <div class="step-highlight">💡 <strong>Личная выгода:</strong> минимум жалоб, максимум благодарностей.</div>
-                                <div class="reflection-block"><strong>🤔 Подумай над этим вопросом:</strong></div>
-                                <ul class="step-list">
-                                    <li>Представь, что заказ едет тебе. Что бы ты хотел увидеть?</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Почему важно проверять каждую позицию заказа?',
-                                options: ['Чтобы ускорить работу', 'Чтобы избежать ошибок в комплектации и сохранить репутацию', 'Чтобы сэкономить упаковку', 'Это не обязательно'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Чек-лист сборщика',
-                            content: `<ul class="step-list">
-                                    <li><strong>Внешний вид</strong> — аккуратность, наличие всех ингредиентов.</li>
-                                    <li><strong>Разделение</strong> — горячее и холодное разделено Гостевым боксом.</li>
-                                    <li><strong>Упаковка</strong> — правильный контейнер, герметично закрыт.</li>
-                                    <li><strong>Вес</strong> — есть сомнения, перепроверь, сверь с нормой.</li>
-                                    <li><strong>Наличие</strong> — все позиции по бланку.</li>
-                                </ul>
-                                <div class="step-highlight">📋 Проверь себя дважды перед отправкой.</div>`,
-                            quiz: {
-                                question: 'Какое действие НЕ указано в чек-листе сборщика?',
-                                options: ['Проверить разделение горячего и холодного', 'Оценить вкус блюда', 'Проверить правильность упаковки', 'Сверить вес'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Контроль качества на линии',
-                            content: `<p>Практический этап:</p>
-                                <ul class="step-list">
-                                    <li>✅ Сверь заказ с бланком и стикерами.</li>
-                                    <li>✅ Убедись, что нет инородных предметов.</li>
-                                    <li>✅ Проверь целостность упаковки.</li>
-                                    <li>✅ Раздели горячее и холодное.</li>
-                                </ul>
-                                <div class="step-highlight">⚡ Нашёл нарушение — останови процесс и исправь.</div>`,
-                            quiz: {
-                                question: 'Что делать, если сборщик заметил нарушение?',
-                                options: ['Продолжить сборку, не обращая внимания', 'Остановить процесс и исправить, сообщить администрации', 'Отправить заказ как есть', 'Свалить вину на другого'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Каждая секунда — качество',
-                            content: `<p>Сделай контроль частью своей рутины:</p>
-                                <ul class="step-list">
-                                    <li>Участвуй в пятиминутках.</li>
-                                    <li>Если сомневаешься — перепроверь.</li>
-                                    <li>Говори о нарушениях открыто.</li>
-                                </ul>
-                                <div class="step-highlight">🌟 Твоя сборка — это лицо ресторана для гостя.</div>`,
-                            quiz: {
-                                question: 'Как сборщик может повысить качество своей работы?',
-                                options: ['Игнорировать сомнения', 'Участвовать в обсуждениях и всегда перепроверять', 'Работать быстрее в ущерб качеству', 'Сокращать количество проверок'],
-                                correct: 1
-                            }
-                        }
-                    ]
-                },
-                kurier: {
-                    label: 'Курьер',
-                    emoji: '🛵',
-                    steps: [
-                        { 
-                            title: 'Ты — финальная миля качества',
-                            content: `<p>Гость ждёт заказ, а ты — его связь с рестораном. Температура и аккуратность в твоих руках.</p>
-                                <div class="step-highlight">🔥 <strong>Твоя задача:</strong> доставить блюдо горячим, целым и в срок.</div>
-                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div>
-                                <ul class="step-list">
-                                    <li>Как температура влияет на вкус?</li>
-                                    <li>Что значит «бережная доставка»?</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Что самое важное для курьера в доставке?',
-                                options: ['Скорость передвижения', 'Сохранение температуры и аккуратность', 'Внешний вид курьера', 'Знание всех улиц'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Улыбка гостя — твоя награда',
-                            content: `<p>Когда гость открывает дверь и получает идеальный заказ — ты даришь ему радость.</p>
-                                <div class="step-highlight">💡 <strong>Личная мотивация:</strong> быть лучшим в своём деле.</div>
-                                <div class="reflection-block"><strong>🤔 Подумай над этим вопросом:</strong></div>
-                                <ul class="step-list">
-                                    <li>Как бы ты хотел, чтобы доставили тебе?</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Почему важно, чтобы заказ был доставлен в целости и сохранности?',
-                                options: ['Чтобы гость не расстроился', 'Чтобы избежать недовольство гостя и сохранить репутацию', 'Чтобы быстрее выполнить план', 'Чтобы получить чаевые'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Температура и санитария',
-                            content: `<ul class="step-list">
-                                    <li><strong>Термосумка</strong> — чистая, плотно закрытая.</li>
-                                    <li><strong>Горячее → горячим, холодное → холодным.</strong></li>
-                                    <li><strong>Аккуратность</strong> — не переворачивай заказы.</li>
-                                    <li><strong>Чистота</strong> — мой сумки после каждой смены.</li>
-                                </ul>
-                                <div class="step-highlight">📋 Проверь термосумку (хладогены, пицца с нагревателем) перед выездом.</div>`,
-                            quiz: {
-                                question: 'Почему нужно проверять термосумку?',
-                                options: ['Для сохранения температуры блюд', 'Чтобы сумка лучше выглядела', 'Чтобы сумка весила меньше', 'Для безопасности курьера'],
-                                correct: 0
-                            }
-                        },
-                        { 
-                            title: 'Проверка перед выездом',
-                            content: `<p>Соблюдай алгоритм:</p>
-                                <ul class="step-list">
-                                    <li>✅ Проверь чистоту и герметичность сумки.</li>
-                                    <li>✅ Убедись, что заказ упакован корректно.</li>
-                                    <li>✅ Соблюдай маршрут — не задерживайся.</li>
-                                </ul>
-                                <div class="step-highlight">⚡ При задержке — предупреди гостя через КЦ.</div>`,
-                            quiz: {
-                                question: 'Что должен сделать курьер при задержке?',
-                                options: ['Проехать быстрее', 'Предупредить гостя через контакт-центр', 'Отменить заказ', 'Не сообщать никому'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Доставка — это сервис',
-                            content: `<p>Будь профессионалом:</p>
-                                <ul class="step-list">
-                                    <li>Всегда проверяй термосумку.</li>
-                                    <li>Бережно относись к заказу Гостя.</li>
-                                    <li>Общайся с гостем приветливо.</li>
-                                </ul>
-                                <div class="step-highlight">🌟 Каждый километр — вклад в доверие.</div>`,
-                            quiz: {
-                                question: 'Что помогает курьеру создать впечатление о ресторане?',
-                                options: ['Скорость доставки', 'Приветливость, аккуратность и бережное отношение к заказу', 'Знание всех улиц', 'Яркая форма'],
-                                correct: 1
-                            }
-                        }
-                    ]
-                },
-                manager: {
-                    label: 'Менеджер',
-                    emoji: '📊',
-                    steps: [
-                        { 
-                            title: 'Качество — твой главный KPI',
-                            content: `<p>Ты отвечаешь за процессы и команду. Качество — это результат твоей организации.</p>
-                                <div class="step-highlight">🔥 <strong>Твоя роль:</strong> контролировать все этапы, от кухни до доставки.</div>
-                                <div class="reflection-block"><strong>🤔 Подумай над этими вопросами:</strong></div>
-                                <ul class="step-list">
-                                    <li>Как ты оцениваешь качество на каждом участке?</li>
-                                    <li>Какие инструменты контроля у тебя есть?</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Что является главной задачей менеджера в обеспечении качества?',
-                                options: ['Готовить блюда', 'Контролировать все этапы и организовывать процессы', 'Доставлять заказы', 'Вести бухгалтерию'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Репутация и лояльность',
-                            content: `<p>Довольные гости — это рост и стабильность. Ты создаёшь систему, где качество — норма.</p>
-                                <div class="step-highlight">💡 <strong>Личная выгода:</strong> гордость за свою команду и ресторан.</div>`,
-                            quiz: {
-                                question: 'Почему качество влияет на лояльность гостей?',
-                                options: ['Потому что гости платят больше', 'Потому что качество создаёт доверие и желание возвращаться', 'Потому что качество увеличивает скорость работы', 'Потому что качество экономит расходы'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Управление качеством',
-                            content: `<ul class="step-list">
-                                    <li><strong>Стандарты</strong> — Мотивити, Обои.</li>
-                                    <li><strong>Аудит</strong> — проверки всех этапов.</li>
-                                    <li><strong>Жалобы</strong> — системный разбор и устранение причин.</li>
-                                    <li><strong>Пятиминутки</strong> — синхронизация команды.</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Какой инструмент помогает менеджеру системно работать с жалобами?',
-                                options: ['Игнорирование жалоб', 'Разбор каждой жалобы и устранение причин', 'Перекладывание ответственности на курьеров', 'Увеличение скорости доставки'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Организация контроля',
-                            content: `<p>Используй в работе:</p>
-                                <ul class="step-list">
-                                    <li>✅ Чек-листы.</li>
-                                    <li>✅ Разбор жалоб без эмоций, только факты.</li>
-                                    <li>✅ Поощряй сотрудников за замечания и исправления.</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Что должен делать менеджер при выявлении системной ошибки?',
-                                options: ['Наказать виновного', 'Внедрить чек-листы и провести разбор с командой', 'Уволить всех', 'Замолчать проблему'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Культура качества в команде',
-                            content: `<p>Сделай качество приоритетом:</p>
-                                <ul class="step-list">
-                                    <li>Проводи пятиминутки регулярно.</li>
-                                    <li>Внедряй систему «Страж качества».</li>
-                                    <li>Отслеживай динамику и корректируй процессы.</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Как менеджер может укрепить культуру качества в команде?',
-                                options: ['Проводить разборы и поощрять инициативу', 'Увеличивать штрафы', 'Сокращать время на проверки', 'Игнорировать мелкие нарушения'],
-                                correct: 0
-                            }
-                        }
-                    ]
-                },
-                director: {
-                    label: 'Директор',
-                    emoji: '🏢',
-                    steps: [
-                        { 
-                            title: 'Качество — стратегия бизнеса',
-                            content: `<p>Ты формируешь культуру качества во всей сети. Это основа репутации и прибыли.</p>
-                                <div class="step-highlight">🔥 <strong>Твоя задача:</strong> видеть общую картину и создавать условия для качества.</div>`,
-                            quiz: {
-                                question: 'Почему качество является стратегией бизнеса для директора?',
-                                options: ['Потому что это красивое слово', 'Потому что качество определяет репутацию и прибыль', 'Потому что это требование поставщиков', 'Потому что это модно'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Бренд, которому доверяют',
-                            content: `<p>Качество определяет лояльность гостей и устойчивость бизнеса.</p>
-                                <div class="step-highlight">💡 <strong>Личная миссия:</strong> сделать бренд эталоном качества.</div>`,
-                            quiz: {
-                                question: 'Что помогает создать доверие к бренду?',
-                                options: ['Реклама', 'Стабильное качество и соблюдение стандартов', 'Большое количество блюд', 'Низкие цены'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Стратегия качества',
-                            content: `<ul class="step-list">
-                                    <li><strong>Стандарты</strong> — единые для всей сети.</li>
-                                    <li><strong>Обучение</strong> — постоянное развитие команды.</li>
-                                    <li><strong>Обратная связь</strong> — работа с жалобами и улучшениями.</li>
-                                    <li><strong>Мотивация</strong> — поощрение за качество.</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Что должен использовать директор для системной работы над качеством?',
-                                options: ['Единые стандарты и систему обучения', 'Разовые акции', 'Только контроль цен', 'Увеличение ассортимента'],
-                                correct: 0
-                            }
-                        },
-                        { 
-                            title: 'Управление изменениями',
-                            content: `<p>Внедряй системные улучшения:</p>
-                                <ul class="step-list">
-                                    <li>✅ Анализируй отзывы и показатели.</li>
-                                    <li>✅ Внедряй лучшие практики в ресторан.</li>
-                                    <li>✅ Личным примером показывай важность качества.</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Как директор может повлиять на качество в сети?',
-                                options: ['Только контролировать финансы', 'Анализировать данные и внедрять лучшие практики', 'Постоянно повышать цены', 'Сокращать штат'],
-                                correct: 1
-                            }
-                        },
-                        { 
-                            title: 'Наследие качества',
-                            content: `<p>Создай систему, которая будет работать без тебя:</p>
-                                <ul class="step-list">
-                                    <li>Развивай лидеров качества в каждом ресторане.</li>
-                                    <li>Используй стандарты и контролируй их выполнение.</li>
-                                    <li>Инвестируй в обучение и культуру.</li>
-                                </ul>`,
-                            quiz: {
-                                question: 'Что поможет директору создать устойчивую культуру качества?',
-                                options: ['Развитие лидеров и постоянное обучение', 'Только личный контроль', 'Жесткая дисциплина', 'Экономия на обучении'],
-                                correct: 0
-                            }
-                        }
-                    ]
+                en: {
+                    name: 'English',
+                    appTitle: '🍽️ Academy',
+                    langTitle: 'Choose language',
+                    langSub: 'Training will be conducted in the selected language',
+                    welcomeTitle: 'Academy<br><span>of Quality</span>',
+                    welcomeSub: 'Micro-learning for delivery restaurant teams',
+                    tag1: '#quality',
+                    tag2: '#team',
+                    tag3: '#guest',
+                    feat1: '🎯6 steps',
+                    feat2: '⭐Badges',
+                    feat3: '📚By roles',
+                    startBtn: '🚀 Start training',
+                    welcomeDuration: '~ 7 minutes · for all positions',
+                    roleTitle: 'Who are you in the team?',
+                    roleSub: 'Choose your role to start training. Each module is adapted to your tasks.',
+                    roleFooter: 'Training is based on the principles of quality and team responsibility',
+                    backToWelcome: '← Back to main',
+                    stepCounterLabel: 'Step',
+                    prevBtn: '← Back',
+                    nextBtn: 'Next →',
+                    finishBtn: '🏁 Finish and get badge',
+                    finishTitle: 'You are the Guardian of Quality!',
+                    finishBadge: 'Badge "Master of Quality"',
+                    finishDesc: 'You have completed quality standards training for your role. Every day is a contribution to a satisfied guest.',
+                    finishNextTitle: '📌 What\'s next?',
+                    finishNext1: '✔ Apply knowledge every shift',
+                    finishNext2: '✔ Participate in five-minute sessions and share experience',
+                    finishNext3: '✔ Monitor quality together with the team',
+                    resetBtn: '🔄 Start over',
+                    finishToWelcome: '🏠 Back to main',
+                    roles: { povar: 'Cook', shef: 'Chef', sbor: 'Assembler', kurier: 'Courier', manager: 'Manager', director: 'Director' },
+                    steps: {
+                        povar: [
+                            { title: 'Quality is your signature', content: `<p>Every dish is the face of the restaurant. The guest tastes flavor, texture, and temperature.</p><div class="step-highlight">🔥 <strong>Your task:</strong> cook strictly according to STK, follow recipes, and control appearance.</div><div class="reflection-block"><strong>🤔 Think about these questions and answer yourself:</strong></div><ul class="step-list"><li>Why does ingredient quality affect flavor?</li><li>How does cooking temperature preserve texture?</li><li>What does "presentability" of a dish mean?</li></ul>` },
+                            { title: 'Guests choose us for the taste', content: `<p>When you put your soul into the dish, the guest feels it. Your work is the main reason people come back.</p><div class="step-highlight">💡 <strong>Personal benefit:</strong> pride in your work, fewer returns, more gratitude.</div><div class="reflection-block"><strong>🤔 Think about these questions:</strong></div><ul class="step-list"><li>Imagine this dish is for your family.</li><li>What compliment would you like to hear?</li></ul>` },
+                            { title: 'Standards and tools', content: `<p>You should know:</p><ul class="step-list"><li><strong>STK</strong> — technological cards for each dish.</li><li><strong>Tastings</strong> — twice a week we check taste and appearance.</li><li><strong>Weight control</strong> — every dish is weighed.</li><li><strong>Temperature regime</strong> — hot food must be hot.</li></ul><div class="step-highlight">📚 All standards in Motiviti (STK).</div>` },
+                            { title: 'Practice — quality check', content: `<p>Now you are ready to apply knowledge:</p><ul class="step-list"><li>✅ Check portion weight — deviation is not allowed.</li><li>✅ Evaluate appearance — neatness and presence of all ingredients.</li><li>✅ Make sure the correct packaging is used.</li></ul><div class="step-highlight">⚡ <strong>Tip:</strong> before serving, always check the dish through the guest's eyes.</div>` },
+                            { title: 'Every day — a step toward excellence', content: `<p>Quality is a habit. Implement into your shift:</p><ul class="step-list"><li>Participate in <strong>five-minute sessions</strong> — discuss mistakes and successes.</li><li>Don't be afraid to redo if you notice a violation.</li><li>Share experience with colleagues.</li></ul><div class="step-highlight">🌟 Remember: a satisfied guest is the result of your work.</div>` }
+                        ],
+                        shef: [
+                            { title: 'You are the quality leader in the kitchen', content: `<p>You are responsible for the standards of the entire kitchen. The quality of every dish is your responsibility.</p><div class="step-highlight">🔥 <strong>Your mission:</strong> control processes, train the team, and be an example.</div><div class="reflection-block"><strong>🤔 Think about these questions and answer yourself:</strong></div><ul class="step-list"><li>How do you evaluate the work of cooks?</li><li>What control tools do you use?</li></ul>` },
+                            { title: 'Reputation and trust', content: `<p>Your name is associated with quality. Guests trust the brand because you guarantee the taste.</p><div class="step-highlight">💡 <strong>Personal motivation:</strong> be proud of every dish that leaves the kitchen.</div><div class="reflection-block"><strong>🤔 Think about these questions:</strong></div><ul class="step-list"><li>How do you inspire the team to quality?</li><li>What does "ideal order" mean to you?</li></ul>` },
+                            { title: 'Quality management', content: `<p>You should master:</p><ul class="step-list"><li><strong>STK</strong> — execution control.</li><li><strong>Tastings</strong> — taste personally and compare with the standard.</li><li><strong>Sanitation</strong> — cleanliness of the kitchen and equipment.</li><li><strong>Temperature</strong> — from refrigerator to thermal bag.</li></ul><div class="step-highlight">📋 Use checklists every shift.</div>` },
+                            { title: 'Mentoring and audit', content: `<p>Conduct an audit of your kitchen:</p><ul class="step-list"><li>✅ Check STK compliance for each cook.</li><li>✅ Organize a tasting and discuss the results.</li><li>✅ Ensure scales and thermometers work correctly.</li></ul><div class="step-highlight">📢 Train the team — share standards and record errors.</div>` },
+                            { title: 'Quality culture', content: `<p>Create a system where quality is the norm of life:</p><ul class="step-list"><li>Daily five-minute sessions with analysis.</li><li>Encourage those who notice and correct violations.</li><li>Implement "golden standards" in the kitchen.</li></ul><div class="step-highlight">🌟 You are the main guardian of quality. Reputation depends on you.</div>` }
+                        ],
+                        sbor: [
+                            { title: 'Assembly is the final touch', content: `<p>You form the order that the guest will see. First impression depends on your accuracy.</p><div class="step-highlight">🔥 <strong>Your task:</strong> complete assembly, appearance, and temperature preservation.</div><div class="reflection-block"><strong>🤔 Think about these questions:</strong></div><ul class="step-list"><li>Why is it important to check every item?</li><li>How does packaging affect the perception of the dish?</li></ul>` },
+                            { title: 'Pride in every order assembly', content: `<p>When the guest opens the order and sees perfect assembly — it is your merit.</p><div class="step-highlight">💡 <strong>Personal benefit:</strong> minimum complaints, maximum gratitude.</div><div class="reflection-block"><strong>🤔 Think about this question:</strong></div><ul class="step-list"><li>Imagine the order is going to you. What would you like to see?</li></ul>` },
+                            { title: 'Assembler checklist', content: `<ul class="step-list"><li><strong>Appearance</strong> — neatness, presence of all ingredients.</li><li><strong>Separation</strong> — hot and cold separated by Guest box.</li><li><strong>Packaging</strong> — correct container, hermetically sealed.</li><li><strong>Weight</strong> — if in doubt, recheck, compare with the norm.</li><li><strong>Presence</strong> — all items according to the form.</li></ul><div class="step-highlight">📋 Check yourself twice before sending.</div>` },
+                            { title: 'Quality control on the line', content: `<p>Practical stage:</p><ul class="step-list"><li>✅ Compare the order with the form and stickers.</li><li>✅ Ensure there are no foreign objects.</li><li>✅ Check the integrity of the packaging.</li><li>✅ Separate hot and cold.</li></ul><div class="step-highlight">⚡ If you find a violation — stop the process and correct it.</div>` },
+                            { title: 'Every second is quality', content: `<p>Make control part of your routine:</p><ul class="step-list"><li>Participate in five-minute sessions.</li><li>If in doubt — recheck.</li><li>Speak openly about violations.</li></ul><div class="step-highlight">🌟 Your assembly is the face of the restaurant for the guest.</div>` }
+                        ],
+                        kurier: [
+                            { title: 'You are the final mile of quality', content: `<p>The guest is waiting for the order, and you are their connection to the restaurant. Temperature and accuracy are in your hands.</p><div class="step-highlight">🔥 <strong>Your task:</strong> deliver the dish hot, intact, and on time.</div><div class="reflection-block"><strong>🤔 Think about these questions:</strong></div><ul class="step-list"><li>How does temperature affect taste?</li><li>What does "careful delivery" mean?</li></ul>` },
+                            { title: 'Guest smile is your reward', content: `<p>When the guest opens the door and receives the perfect order — you give them joy.</p><div class="step-highlight">💡 <strong>Personal motivation:</strong> be the best in your field.</div><div class="reflection-block"><strong>🤔 Think about this question:</strong></div><ul class="step-list"><li>How would you like to be delivered to you?</li></ul>` },
+                            { title: 'Temperature and sanitation', content: `<ul class="step-list"><li><strong>Thermal bag</strong> — clean, tightly closed.</li><li><strong>Hot → hot, cold → cold.</strong></li><li><strong>Carefulness</strong> — do not turn orders over.</li><li><strong>Cleanliness</strong> — wash bags after each shift.</li></ul><div class="step-highlight">📋 Check the thermal bag (cold accumulators, pizza heater) before departure.</div>` },
+                            { title: 'Check before departure', content: `<p>Follow the algorithm:</p><ul class="step-list"><li>✅ Check the cleanliness and tightness of the bag.</li><li>✅ Make sure the order is packaged correctly.</li><li>✅ Follow the route — do not delay.</li></ul><div class="step-highlight">⚡ In case of a delay — inform the guest via the Contact Center.</div>` },
+                            { title: 'Delivery is service', content: `<p>Be professional:</p><ul class="step-list"><li>Always check the thermal bag.</li><li>Handle the guest's order carefully.</li><li>Communicate with the guest warmly.</li></ul><div class="step-highlight">🌟 Every kilometer is a contribution to trust.</div>` }
+                        ],
+                        manager: [
+                            { title: 'Quality is your main KPI', content: `<p>You are responsible for processes and the team. Quality is the result of your organization.</p><div class="step-highlight">🔥 <strong>Your role:</strong> control all stages, from kitchen to delivery.</div><div class="reflection-block"><strong>🤔 Think about these questions:</strong></div><ul class="step-list"><li>How do you evaluate quality at each site?</li><li>What control tools do you have?</li></ul>` },
+                            { title: 'Reputation and loyalty', content: `<p>Satisfied guests mean growth and stability. You create a system where quality is the norm.</p><div class="step-highlight">💡 <strong>Personal benefit:</strong> pride in your team and restaurant.</div>` },
+                            { title: 'Quality management', content: `<ul class="step-list"><li><strong>Standards</strong> — Motiviti, Oboi.</li><li><strong>Audit</strong> — checks of all stages.</li><li><strong>Complaints</strong> — systematic analysis and elimination of causes.</li><li><strong>Five-minute sessions</strong> — team synchronization.</li></ul>` },
+                            { title: 'Organization of control', content: `<p>Use in your work:</p><ul class="step-list"><li>✅ Checklists.</li><li>✅ Complaint analysis without emotions, only facts.</li><li>✅ Encourage employees for noticing and correcting.</li></ul>` },
+                            { title: 'Quality culture in the team', content: `<p>Make quality a priority:</p><ul class="step-list"><li>Conduct five-minute sessions regularly.</li><li>Implement the "Quality Guardian" system.</li><li>Track dynamics and adjust processes.</li></ul>` }
+                        ],
+                        director: [
+                            { title: 'Quality is a business strategy', content: `<p>You shape the culture of quality throughout the network. This is the foundation of reputation and profit.</p><div class="step-highlight">🔥 <strong>Your task:</strong> see the big picture and create conditions for quality.</div>` },
+                            { title: 'A brand to trust', content: `<p>Quality determines guest loyalty and business sustainability.</p><div class="step-highlight">💡 <strong>Personal mission:</strong> make the brand a benchmark of quality.</div>` },
+                            { title: 'Quality strategy', content: `<ul class="step-list"><li><strong>Standards</strong> — unified for the entire network.</li><li><strong>Training</strong> — continuous team development.</li><li><strong>Feedback</strong> — working with complaints and improvements.</li><li><strong>Motivation</strong> — rewards for quality.</li></ul>` },
+                            { title: 'Change management', content: `<p>Implement systemic improvements:</p><ul class="step-list"><li>✅ Analyze feedback and indicators.</li><li>✅ Implement best practices in the restaurant.</li><li>✅ Lead by example, showing the importance of quality.</li></ul>` },
+                            { title: 'Legacy of quality', content: `<p>Create a system that will work without you:</p><ul class="step-list"><li>Develop quality leaders in each restaurant.</li><li>Use standards and control their implementation.</li><li>Invest in training and culture.</li></ul>` }
+                        ]
+                    },
+                    finalQuiz: [
+                        { question: 'What is most important when preparing a dish?', options: ['Cooking speed', 'Quality of ingredients and compliance with STK', 'Number of portions', 'Bright presentation'], correct: 1 },
+                        { question: 'Why is it important to check the temperature of the dish before sending?', options: ['So the guest receives the dish at the correct temperature', 'To speed up delivery', 'To save packaging', 'It does not affect quality'], correct: 0 },
+                        { question: 'What to do if you notice a violation at any stage?', options: ['Pass if no one sees', 'Stop the process and correct it, inform the administration', 'Send as is, the guest won\'t notice', 'Pretend everything is fine'], correct: 1 }
+                    ],
+                    stepQuizzes: {
+                        povar: [
+                            { question: 'Which factor does NOT relate to dish quality control?', options: ['Freshness of ingredients', 'Packaging color', 'Compliance with recipe', 'Serving temperature'], correct: 1 },
+                            { question: 'What helps preserve the taste of a dish during cooking?', options: ['Large number of portions', 'Accurate temperature maintenance', 'Fast serving', 'Bright decoration'], correct: 1 },
+                            { question: 'What is STK?', options: ['Thermal control system', 'Technological card standard', 'Heat treatment method', 'Special thermometer'], correct: 1 },
+                            { question: 'Which action is NOT included in checking the dish before giving it away?', options: ['Check weight', 'Evaluate appearance', 'Check price', 'Correct packaging is used'], correct: 2 },
+                            { question: 'What helps improve quality in the team?', options: ['Ignoring small errors', 'Five-minute sessions and analysis', 'Increasing work speed', 'Reducing portions'], correct: 1 }
+                        ],
+                        shef: [
+                            { question: 'What are the responsibilities of a chef for quality control?', options: ['Only cooking dishes', 'Control of all processes and team training', 'Order decoration', 'Delivering dishes to guests'], correct: 1 },
+                            { question: 'Why is the chef\'s reputation important for the restaurant?', options: ['Because he cooks the most delicious dishes', 'Because he guarantees stable quality and guest trust', 'Because he works faster than everyone', 'Because he is responsible for purchasing'], correct: 1 },
+                            { question: 'Which tool does NOT relate to kitchen quality management?', options: ['Checklists', 'Tastings', 'Social media', 'Temperature control'], correct: 2 },
+                            { question: 'What should a chef do when a systemic error is detected in the kitchen?', options: ['Punish the guilty', 'Analyze the cause and train the team', 'Dismiss the employee', 'Hide the problem'], correct: 1 },
+                            { question: 'Which method helps strengthen the quality culture in the kitchen?', options: ['Banning discussion of errors', 'Regular five-minute sessions and encouraging initiative', 'Increasing the load on cooks', 'Reducing cooking time'], correct: 1 }
+                        ],
+                        sbor: [
+                            { question: 'What are the duties of an assembler?', options: ['Cook dishes', 'Complete orders and check appearance', 'Deliver orders to guests', 'Purchase products'], correct: 1 },
+                            { question: 'Why is it important to check every item of the order?', options: ['To speed up work', 'To avoid errors in assembly and maintain reputation', 'To save packaging', 'It is not necessary'], correct: 1 },
+                            { question: 'Which action is NOT listed in the assembler\'s checklist?', options: ['Check the separation of hot and cold', 'Evaluate the taste of the dish', 'Check the correctness of packaging', 'Compare weight'], correct: 1 },
+                            { question: 'What should an assembler do if they notice a violation?', options: ['Continue assembly without attention', 'Stop the process and correct it, inform the administration', 'Send the order as is', 'Blame someone else'], correct: 1 },
+                            { question: 'How can an assembler improve the quality of their work?', options: ['Ignore doubts', 'Participate in discussions and always recheck', 'Work faster at the expense of quality', 'Reduce the number of checks'], correct: 1 }
+                        ],
+                        kurier: [
+                            { question: 'What is the main priority for a courier in delivery? (all points are important, but choose the main one)', options: ['Speed of movement', 'Preservation of temperature and accuracy', 'Courier appearance', 'Knowledge of all streets'], correct: 1 },
+                            { question: 'Why is it important that the order is delivered intact and safely?', options: ['So the guest does not get upset', 'To avoid guest dissatisfaction and maintain reputation', 'To complete the plan faster', 'To receive tips'], correct: 1 },
+                            { question: 'Why is it necessary to check the thermal bag?', options: ['To maintain the temperature of dishes', 'To make the bag look better', 'To make the bag lighter', 'For the courier\'s safety'], correct: 0 },
+                            { question: 'What should a courier do in case of a delay?', options: ['Drive faster', 'Notify the guest via the contact center', 'Cancel the order', 'Do not inform anyone'], correct: 1 },
+                            { question: 'What helps a courier create an impression of the restaurant?', options: ['Delivery speed', 'Friendliness, accuracy, and careful attitude to the order', 'Knowledge of all streets', 'Bright uniform'], correct: 1 }
+                        ],
+                        manager: [
+                            { question: 'What is the main task of a manager in ensuring quality?', options: ['Cook dishes', 'Control all stages and organize processes', 'Deliver orders', 'Keep accounting'], correct: 1 },
+                            { question: 'Why does quality affect guest loyalty?', options: ['Because guests pay more', 'Because quality creates trust and a desire to return', 'Because quality increases work speed', 'Because quality saves costs'], correct: 1 },
+                            { question: 'Which tool helps a manager systematically work with complaints?', options: ['Ignoring complaints', 'Analyzing each complaint and eliminating causes', 'Shifting responsibility to couriers', 'Increasing delivery speed'], correct: 1 },
+                            { question: 'What should a manager do when a systemic error is detected?', options: ['Punish the guilty', 'Implement checklists and conduct a review with the team', 'Fire everyone', 'Hide the problem'], correct: 1 },
+                            { question: 'How can a manager strengthen the quality culture in the team?', options: ['Conduct reviews and encourage initiative', 'Increase fines', 'Reduce check time', 'Ignore minor violations'], correct: 0 }
+                        ],
+                        director: [
+                            { question: 'Why is quality a business strategy for a director?', options: ['Because it is a beautiful word', 'Because quality determines reputation and profit', 'Because it is a supplier requirement', 'Because it is trendy'], correct: 1 },
+                            { question: 'What helps build trust in the brand?', options: ['Advertising', 'Stable quality and compliance with standards', 'Large number of dishes', 'Low prices'], correct: 1 },
+                            { question: 'What should a director use for systematic work on quality?', options: ['Unified standards and a training system', 'One-time promotions', 'Only price control', 'Increasing assortment'], correct: 0 },
+                            { question: 'How can a director influence quality in the network?', options: ['Only control finances', 'Analyze data and implement best practices', 'Constantly raise prices', 'Reduce staff'], correct: 1 },
+                            { question: 'What helps a director create a sustainable quality culture?', options: ['Developing leaders and continuous training', 'Only personal control', 'Strict discipline', 'Saving on training'], correct: 0 }
+                        ]
+                    }
                 }
             };
 
             // ============================
-            // 2. СОСТОЯНИЕ
+            // 1. СОСТОЯНИЕ
             // ============================
+            let currentLang = localStorage.getItem('academyLang') || null;
             let currentRole = null;
             let currentStep = 0;
             const totalSteps = 6;
@@ -987,11 +1163,13 @@
             let quizAnswers = [];
 
             // DOM
+            const pageLang = document.getElementById('pageLang');
             const pageWelcome = document.getElementById('pageWelcome');
             const pageRoles = document.getElementById('pageRoles');
             const pageTraining = document.getElementById('pageTraining');
             const pageFinish = document.getElementById('pageFinish');
 
+            const appTitle = document.getElementById('appTitle');
             const roleBadge = document.getElementById('roleBadge');
             const pointsDisplay = document.getElementById('pointsDisplay');
             const roleGrid = document.getElementById('roleGrid');
@@ -1007,8 +1185,101 @@
             const backToWelcomeBtn = document.getElementById('backToWelcomeBtn');
             const finishToWelcomeBtn = document.getElementById('finishToWelcomeBtn');
 
+            // Элементы с текстами
+            const langTitle = document.getElementById('langTitle');
+            const langSub = document.getElementById('langSub');
+            const welcomeTitle = document.getElementById('welcomeTitle');
+            const welcomeSub = document.getElementById('welcomeSub');
+            const tag1 = document.getElementById('tag1');
+            const tag2 = document.getElementById('tag2');
+            const tag3 = document.getElementById('tag3');
+            const feat1 = document.getElementById('feat1');
+            const feat2 = document.getElementById('feat2');
+            const feat3 = document.getElementById('feat3');
+            const welcomeDuration = document.getElementById('welcomeDuration');
+            const roleTitle = document.getElementById('roleTitle');
+            const roleSub = document.getElementById('roleSub');
+            const roleFooter = document.getElementById('roleFooter');
+            const stepCounterLabel = document.getElementById('stepCounterLabel');
+            const finishTitle = document.getElementById('finishTitle');
+            const finishBadge = document.getElementById('finishBadge');
+            const finishDesc = document.getElementById('finishDesc');
+            const finishNextTitle = document.getElementById('finishNextTitle');
+            const finishNext1 = document.getElementById('finishNext1');
+            const finishNext2 = document.getElementById('finishNext2');
+            const finishNext3 = document.getElementById('finishNext3');
+
+            function getLang() {
+                return currentLang || 'ru';
+            }
+
+            function t(key, fallback) {
+                const lang = getLang();
+                const data = LANG_DATA[lang];
+                if (!data) return fallback || key;
+                const parts = key.split('.');
+                let obj = data;
+                for (let p of parts) {
+                    if (obj && obj[p] !== undefined) obj = obj[p];
+                    else return fallback || key;
+                }
+                return obj;
+            }
+
+            function applyLanguage() {
+                const lang = getLang();
+                const data = LANG_DATA[lang];
+                if (!data) return;
+                // Заголовок
+                appTitle.textContent = data.appTitle;
+                // Страница выбора языка
+                langTitle.textContent = data.langTitle;
+                langSub.textContent = data.langSub;
+                // Приветствие
+                welcomeTitle.innerHTML = data.welcomeTitle;
+                welcomeSub.textContent = data.welcomeSub;
+                tag1.textContent = data.tag1;
+                tag2.textContent = data.tag2;
+                tag3.textContent = data.tag3;
+                feat1.textContent = data.feat1;
+                feat2.textContent = data.feat2;
+                feat3.textContent = data.feat3;
+                startBtn.textContent = data.startBtn;
+                welcomeDuration.textContent = data.welcomeDuration;
+                // Роли
+                roleTitle.textContent = data.roleTitle;
+                roleSub.textContent = data.roleSub;
+                roleFooter.textContent = data.roleFooter;
+                backToWelcomeBtn.textContent = data.backToWelcome;
+                stepCounterLabel.textContent = data.stepCounterLabel + ' ';
+                // Кнопки
+                prevBtn.textContent = data.prevBtn;
+                nextBtn.textContent = data.nextBtn;
+                finishBtn.textContent = data.finishBtn;
+                // Финиш
+                finishTitle.textContent = data.finishTitle;
+                finishBadge.textContent = data.finishBadge;
+                finishDesc.textContent = data.finishDesc;
+                finishNextTitle.textContent = data.finishNextTitle;
+                finishNext1.textContent = data.finishNext1;
+                finishNext2.textContent = data.finishNext2;
+                finishNext3.textContent = data.finishNext3;
+                resetBtn.textContent = data.resetBtn;
+                finishToWelcomeBtn.textContent = data.finishToWelcome;
+
+                // Обновить названия ролей
+                document.querySelectorAll('[data-role-label]').forEach(el => {
+                    const roleKey = el.dataset.roleLabel;
+                    if (data.roles[roleKey]) el.textContent = data.roles[roleKey];
+                });
+                // Если уже на тренировке — перерисовать
+                if (pageTraining.classList.contains('active') && currentRole) {
+                    renderStep();
+                }
+            }
+
             // ============================
-            // 3. ФУНКЦИИ
+            // 2. ФУНКЦИИ
             // ============================
             function switchPage(pageId) {
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1029,37 +1300,47 @@
                 });
             }
 
+            function getStepQuiz(role, stepIndex) {
+                const lang = getLang();
+                const roleQuizzes = LANG_DATA[lang]?.stepQuizzes?.[role];
+                if (roleQuizzes && roleQuizzes[stepIndex]) return roleQuizzes[stepIndex];
+                // fallback
+                return null;
+            }
+
             function renderStep() {
                 if (!currentRole) return;
-                const data = trainingData[currentRole];
-                if (!data) return;
+                const lang = getLang();
+                const data = LANG_DATA[lang];
+                const roleSteps = data?.steps?.[currentRole];
+                if (!roleSteps) return;
                 if (currentStep === 5) {
                     renderFinalQuiz();
                     return;
                 }
-                const step = data.steps[currentStep];
+                const step = roleSteps[currentStep];
                 if (!step) return;
 
                 stepCounter.textContent = (currentStep + 1) + '/' + totalSteps;
-                trainingRoleTag.textContent = data.emoji + ' ' + data.label;
+                const roleLabel = data.roles[currentRole] || currentRole;
+                trainingRoleTag.textContent = trainingData[currentRole].emoji + ' ' + roleLabel;
 
                 let html = `<h3 class="step-title">${step.title}</h3>
                             <div class="step-text">${step.content}</div>`;
 
-                // Добавляем мини-задание
-                if (step.quiz) {
-                    const q = step.quiz;
+                const quiz = getStepQuiz(currentRole, currentStep);
+                if (quiz) {
                     const selected = stepAnswers[currentStep] !== undefined ? stepAnswers[currentStep] : -1;
                     const checked = stepChecked[currentStep] || false;
-                    const isCorrect = (selected === q.correct);
+                    const isCorrect = (selected === quiz.correct);
 
                     html += `<div class="step-quiz" data-step="${currentStep}">
                         <div class="quiz-question">
-                            <p>${q.question}</p>`;
-                    q.options.forEach((opt, idx) => {
+                            <p>${quiz.question}</p>`;
+                    quiz.options.forEach((opt, idx) => {
                         let cls = 'quiz-option';
                         if (selected === idx && checked) {
-                            cls += (idx === q.correct) ? ' correct' : ' wrong';
+                            cls += (idx === quiz.correct) ? ' correct' : ' wrong';
                         }
                         if (selected === idx) cls += ' selected';
                         if (checked) cls += ' disabled';
@@ -1067,10 +1348,11 @@
                     });
                     html += `</div>`;
                     if (!checked) {
-                        html += `<button class="btn btn-secondary check-step-quiz" style="margin-top:8px; width:auto; padding:8px 20px;">Проверить</button>`;
+                        html += `<button class="btn btn-secondary check-step-quiz" style="margin-top:8px; width:auto; padding:8px 20px;">${data.stepQuizzes?.[currentRole]?.[currentStep] ? 'Проверить' : 'Check'}</button>`;
                     } else {
+                        const correctText = data.stepQuizzes?.[currentRole]?.[currentStep]?.options?.[quiz.correct] || quiz.options[quiz.correct];
                         html += `<div class="quiz-feedback ${isCorrect ? 'correct' : 'wrong'}">
-                            ${isCorrect ? '✅ Верно! +5 очков' : '❌ Неправильно. Правильный ответ: ' + q.options[q.correct]}
+                            ${isCorrect ? '✅ Верно! +5 очков' : '❌ Неправильно. Правильный ответ: ' + correctText}
                         </div>`;
                     }
                     html += `</div>`;
@@ -1078,7 +1360,6 @@
 
                 stepContainer.innerHTML = html;
 
-                // Обработчики для мини-задания
                 if (!stepChecked[currentStep]) {
                     const container = stepContainer.querySelector('.step-quiz');
                     if (container) {
@@ -1097,10 +1378,11 @@
                         if (checkBtn) {
                             checkBtn.addEventListener('click', function() {
                                 if (stepAnswers[currentStep] === undefined) {
-                                    alert('Выбери вариант ответа');
+                                    alert('Выберите вариант ответа / Choose an option');
                                     return;
                                 }
-                                const correct = step.quiz.correct;
+                                const quiz = getStepQuiz(currentRole, currentStep);
+                                const correct = quiz.correct;
                                 const userAns = stepAnswers[currentStep];
                                 const isCorrect = (userAns === correct);
                                 stepChecked[currentStep] = true;
@@ -1121,13 +1403,21 @@
             }
 
             function renderFinalQuiz() {
+                const lang = getLang();
+                const data = LANG_DATA[lang];
+                const finalQuiz = data.finalQuiz || [
+                    { question: 'Question 1', options: ['A','B','C','D'], correct: 0 },
+                    { question: 'Question 2', options: ['A','B','C','D'], correct: 0 },
+                    { question: 'Question 3', options: ['A','B','C','D'], correct: 0 }
+                ];
                 stepCounter.textContent = '6/6';
-                trainingRoleTag.textContent = trainingData[currentRole].emoji + ' ' + trainingData[currentRole].label;
+                const roleLabel = data.roles[currentRole] || currentRole;
+                trainingRoleTag.textContent = trainingData[currentRole].emoji + ' ' + roleLabel;
 
-                let html = `<h3 class="step-title">Проверь знания</h3>
-                    <p style="font-size:15px; color:#5a5550; margin-bottom:12px;">Ответь на три вопроса, чтобы завершить обучение.</p>
+                let html = `<h3 class="step-title">${data.finalQuizTitle || 'Проверь знания / Check knowledge'}</h3>
+                    <p style="font-size:15px; color:#5a5550; margin-bottom:12px;">${data.finalQuizSub || 'Ответь на три вопроса, чтобы завершить обучение.'}</p>
                     <div class="quiz-final">`;
-                quizData.forEach((q, idx) => {
+                finalQuiz.forEach((q, idx) => {
                     html += `<div class="quiz-question" data-q="${idx}">
                         <p>${idx+1}. ${q.question}</p>`;
                     q.options.forEach((opt, optIdx) => {
@@ -1140,16 +1430,12 @@
                     html += `</div>`;
                 });
                 const allAnswered = quizAnswers.every(a => a !== undefined);
-                if (allAnswered) {
-                    html += `<button class="btn btn-success" id="checkFinalQuizBtn" style="margin-top:12px;">✅ Проверить ответы</button>`;
-                } else {
-                    html += `<button class="btn btn-success" id="checkFinalQuizBtn" style="margin-top:12px;" disabled>✅ Проверить ответы</button>`;
-                }
+                const checkLabel = data.finalCheckBtn || '✅ Проверить ответы';
+                html += `<button class="btn btn-success" id="checkFinalQuizBtn" style="margin-top:12px;" ${allAnswered ? '' : 'disabled'}>${checkLabel}</button>`;
                 html += `</div>`;
 
                 stepContainer.innerHTML = html;
 
-                // Обработчики для выбора вариантов
                 document.querySelectorAll('.quiz-final .quiz-option').forEach(el => {
                     el.addEventListener('click', function() {
                         if (this.classList.contains('disabled')) return;
@@ -1161,7 +1447,7 @@
                         quizAnswers[qIdx] = optIdx;
                         const allNow = quizAnswers.every(a => a !== undefined);
                         const btn = document.getElementById('checkFinalQuizBtn');
-                        btn.disabled = !allNow;
+                        if (btn) btn.disabled = !allNow;
                     });
                 });
 
@@ -1170,7 +1456,7 @@
                     checkBtn.addEventListener('click', function() {
                         if (this.disabled) return;
                         let correctCount = 0;
-                        quizData.forEach((q, idx) => {
+                        finalQuiz.forEach((q, idx) => {
                             const userAns = quizAnswers[idx];
                             const isCorrect = (userAns === q.correct);
                             if (isCorrect) correctCount++;
@@ -1185,10 +1471,11 @@
                         points += correctCount * 10;
                         updatePoints();
                         this.disabled = true;
-                        this.textContent = `✅ Верно ${correctCount} из 3`;
+                        const finishLabel = LANG_DATA[getLang()]?.finishBtn || '🏁 Завершить и получить бейдж';
+                        this.textContent = `✅ ${data.finalResultPrefix || 'Верно'} ${correctCount} ${data.finalResultSuffix || 'из 3'}`;
                         const finishClone = document.getElementById('finishTrainingBtn');
                         finishClone.style.display = 'inline-flex';
-                        finishClone.textContent = '🏁 Завершить и получить бейдж';
+                        finishClone.textContent = finishLabel;
                     });
                 }
 
@@ -1246,15 +1533,38 @@
                 quizAnswers = [];
                 points += 10;
                 updatePoints();
-                const label = trainingData[role].label;
+                const lang = getLang();
+                const data = LANG_DATA[lang];
+                const label = data.roles[role] || role;
                 roleBadge.textContent = trainingData[role].emoji + ' ' + label;
                 switchPage('pageTraining');
                 renderStep();
             }
 
+            function initLang() {
+                if (currentLang) {
+                    applyLanguage();
+                    switchPage('pageWelcome');
+                } else {
+                    switchPage('pageLang');
+                }
+            }
+
             // ============================
-            // 4. ОБРАБОТЧИКИ
+            // 3. ОБРАБОТЧИКИ
             // ============================
+            document.getElementById('langGrid').addEventListener('click', function(e) {
+                const item = e.target.closest('.lang-item');
+                if (!item) return;
+                const lang = item.dataset.lang;
+                if (lang && LANG_DATA[lang]) {
+                    currentLang = lang;
+                    localStorage.setItem('academyLang', lang);
+                    applyLanguage();
+                    switchPage('pageWelcome');
+                }
+            });
+
             startBtn.addEventListener('click', () => resetAll(false));
             backToWelcomeBtn.addEventListener('click', () => resetAll(true));
             finishToWelcomeBtn.addEventListener('click', () => resetAll(true));
@@ -1272,9 +1582,9 @@
 
             nextBtn.addEventListener('click', () => {
                 if (currentStep < 5) {
-                    const step = trainingData[currentRole].steps[currentStep];
-                    if (step.quiz && !stepChecked[currentStep]) {
-                        alert('Сначала выполни задание в этом шаге!');
+                    const step = getStepQuiz(currentRole, currentStep);
+                    if (step && !stepChecked[currentStep]) {
+                        alert('Сначала выполни задание в этом шаге! / Complete the task in this step first!');
                         return;
                     }
                 }
@@ -1289,9 +1599,9 @@
             resetBtn.addEventListener('click', () => resetAll(true));
 
             // ============================
-            // 5. ИНИЦИАЛИЗАЦИЯ
+            // 4. ИНИЦИАЛИЗАЦИЯ
             // ============================
-            switchPage('pageWelcome');
+            initLang();
             prevBtn.style.display = 'none';
             updatePoints();
         })();
