@@ -429,7 +429,7 @@
 
                     <!-- Блок выбора языка -->
                     <div class="lang-selector">
-                        <p id="langPrompt">Выберите язык для обучения</p>
+                        <p id="langPrompt">Выберите язык для обучения / Choose training language</p>
                         <div class="lang-options" id="langOptions">
                             <button class="lang-btn" data-lang="ru"><span class="flag">🇷🇺</span> Русский</button>
                             <button class="lang-btn" data-lang="ky"><span class="flag">🇰🇬</span> Кыргызча</button>
@@ -547,8 +547,18 @@
                     finishNext3: '✔ Следи за качеством вместе с командой',
                     resetBtn: '🔄 Пройти заново',
                     finishToWelcome: '🏠 На главную',
-                    checkBtn: 'Проверить',
+                    // Дополнительные переводы для UI
+                    checkStepBtn: 'Проверить',
+                    correctFeedback: '✅ Верно! +5 очков',
+                    wrongFeedback: '❌ Неправильно. Правильный ответ: ',
+                    finalResultPrefix: 'Верно',
+                    finalResultSuffix: 'из 3',
+                    stepRequiredAlert: 'Сначала выполни задание в этом шаге!',
                     finalCheckBtn: '✅ Проверить ответы',
+                    finalQuizTitle: 'Проверь знания',
+                    finalQuizSub: 'Ответь на три вопроса, чтобы завершить обучение.',
+                    finalResultPrefix: 'Верно',
+                    finalResultSuffix: 'из 3',
                     roles: {
                         povar: 'Повар',
                         shef: 'Шеф-повар',
@@ -682,8 +692,15 @@
                     finishNext3: '✔ Команда менен бирге сапатты көзөмөлдө',
                     resetBtn: '🔄 Кайрадан өтүү',
                     finishToWelcome: '🏠 Башкы бетке',
-                    checkBtn: 'Текшерүү',
+                    checkStepBtn: 'Текшерүү',
+                    correctFeedback: '✅ Туура! +5 упай',
+                    wrongFeedback: '❌ Туура эмес. Туура жооп: ',
+                    finalResultPrefix: 'Туура',
+                    finalResultSuffix: '3төн',
+                    stepRequiredAlert: 'Бул кадамдагы тапшырманы аткар!',
                     finalCheckBtn: '✅ Жоопторду текшерүү',
+                    finalQuizTitle: 'Билимиңди текшер',
+                    finalQuizSub: 'Үч суроого жооп берип, окууну бүтүр.',
                     roles: { povar: 'Ашпоз', shef: 'Шеф-ашпоз', sbor: 'Терүүчү', kurier: 'Курьер', manager: 'Менеджер', director: 'Директор' },
                     steps: {
                         povar: [
@@ -810,8 +827,15 @@
                     finishNext3: '✔ Jamoa bilan birga sifatni kuzatib boring',
                     resetBtn: '🔄 Qayta o‘tish',
                     finishToWelcome: '🏠 Bosh sahifaga',
-                    checkBtn: 'Tekshirish',
+                    checkStepBtn: 'Tekshirish',
+                    correctFeedback: '✅ To‘g‘ri! +5 ball',
+                    wrongFeedback: '❌ Noto‘g‘ri. To‘g‘ri javob: ',
+                    finalResultPrefix: 'To‘g‘ri',
+                    finalResultSuffix: 'tadan 3',
+                    stepRequiredAlert: 'Avval ushbu qadamdagi vazifani bajaring!',
                     finalCheckBtn: '✅ Javoblarni tekshirish',
+                    finalQuizTitle: 'Bilimlarni tekshirish',
+                    finalQuizSub: 'Uchta savolga javob bering va o‘qitishni yakunlang.',
                     roles: { povar: 'Oshpaz', shef: 'Bosh oshpaz', sbor: 'Yig‘uvchi', kurier: 'Kuryer', manager: 'Menejer', director: 'Direktor' },
                     steps: {
                         povar: [
@@ -938,8 +962,15 @@
                     finishNext3: '✔ Сифатро бо даста назорат кунед',
                     resetBtn: '🔄 Аз нав гузаштан',
                     finishToWelcome: '🏠 Ба саҳифаи асосӣ',
-                    checkBtn: 'Санҷиш',
-                    finalCheckBtn: '✅ Ҷавобҳоро санҷиш',
+                    checkStepBtn: 'Санҷиш',
+                    correctFeedback: '✅ Дуруст! +5 хол',
+                    wrongFeedback: '❌ Нодуруст. Ҷавоби дуруст: ',
+                    finalResultPrefix: 'Дуруст',
+                    finalResultSuffix: 'аз 3',
+                    stepRequiredAlert: 'Аввал супоришро дар ин қадам иҷро кунед!',
+                    finalCheckBtn: '✅ Ҷавобҳоро санҷед',
+                    finalQuizTitle: 'Дониши худро санҷед',
+                    finalQuizSub: 'Ба се савол ҷавоб диҳед, то таълимро анҷом диҳед.',
                     roles: { povar: 'Ошпаз', shef: 'Ошпази сар', sbor: 'Ҷамъкунанда', kurier: 'Курьер', manager: 'Менеҷер', director: 'Директор' },
                     steps: {
                         povar: [
@@ -1066,8 +1097,15 @@
                     finishNext3: '✔ Monitor quality together with the team',
                     resetBtn: '🔄 Start over',
                     finishToWelcome: '🏠 Back to main',
-                    checkBtn: 'Check',
+                    checkStepBtn: 'Check',
+                    correctFeedback: '✅ Correct! +5 points',
+                    wrongFeedback: '❌ Incorrect. Correct answer: ',
+                    finalResultPrefix: 'Correct',
+                    finalResultSuffix: 'out of 3',
+                    stepRequiredAlert: 'Complete the task in this step first!',
                     finalCheckBtn: '✅ Check answers',
+                    finalQuizTitle: 'Test your knowledge',
+                    finalQuizSub: 'Answer three questions to complete the training.',
                     roles: { povar: 'Cook', shef: 'Chef', sbor: 'Assembler', kurier: 'Courier', manager: 'Manager', director: 'Director' },
                     steps: {
                         povar: [
@@ -1201,6 +1239,7 @@
             const langOptions = document.getElementById('langOptions');
             const langPrompt = document.getElementById('langPrompt');
 
+            // Элементы с текстами
             const welcomeTitle = document.getElementById('welcomeTitle');
             const welcomeSub = document.getElementById('welcomeSub');
             const tag1 = document.getElementById('tag1');
@@ -1353,12 +1392,11 @@
                     });
                     html += `</div>`;
                     if (!checked) {
-                        // Используем переведённую кнопку
-                        html += `<button class="btn btn-secondary check-step-quiz" style="margin-top:8px; width:auto; padding:8px 20px;">${data.checkBtn || 'Проверить'}</button>`;
+                        html += `<button class="btn btn-secondary check-step-quiz" style="margin-top:8px; width:auto; padding:8px 20px;">${data.checkStepBtn}</button>`;
                     } else {
-                        const correctText = data.stepQuizzes?.[currentRole]?.[currentStep]?.options?.[quiz.correct] || quiz.options[quiz.correct];
+                        const correctText = quiz.options[quiz.correct];
                         html += `<div class="quiz-feedback ${isCorrect ? 'correct' : 'wrong'}">
-                            ${isCorrect ? '✅ Верно! +5 очков' : '❌ Неправильно. Правильный ответ: ' + correctText}
+                            ${isCorrect ? data.correctFeedback : data.wrongFeedback + correctText}
                         </div>`;
                     }
                     html += `</div>`;
@@ -1384,7 +1422,7 @@
                         if (checkBtn) {
                             checkBtn.addEventListener('click', function() {
                                 if (stepAnswers[currentStep] === undefined) {
-                                    alert('Выберите вариант ответа / Choose an option');
+                                    alert(data.stepRequiredAlert);
                                     return;
                                 }
                                 const quiz = getStepQuiz(currentRole, currentStep);
@@ -1436,8 +1474,7 @@
                     html += `</div>`;
                 });
                 const allAnswered = quizAnswers.every(a => a !== undefined);
-                const checkLabel = data.finalCheckBtn || '✅ Проверить ответы';
-                html += `<button class="btn btn-success" id="checkFinalQuizBtn" style="margin-top:12px;" ${allAnswered ? '' : 'disabled'}>${checkLabel}</button>`;
+                html += `<button class="btn btn-success" id="checkFinalQuizBtn" style="margin-top:12px;" ${allAnswered ? '' : 'disabled'}>${data.finalCheckBtn}</button>`;
                 html += `</div>`;
 
                 stepContainer.innerHTML = html;
@@ -1477,11 +1514,10 @@
                         points += correctCount * 10;
                         updatePoints();
                         this.disabled = true;
-                        const finishLabel = LANG_DATA[getLang()]?.finishBtn || '🏁 Завершить и получить бейдж';
                         this.textContent = `✅ ${data.finalResultPrefix || 'Верно'} ${correctCount} ${data.finalResultSuffix || 'из 3'}`;
                         const finishClone = document.getElementById('finishTrainingBtn');
                         finishClone.style.display = 'inline-flex';
-                        finishClone.textContent = finishLabel;
+                        finishClone.textContent = data.finishBtn;
                     });
                 }
 
@@ -1554,7 +1590,9 @@
                 updatePoints();
             }
 
-            // Обработчики событий
+            // ============================
+            // 3. ОБРАБОТЧИКИ
+            // ============================
             langOptions.addEventListener('click', function(e) {
                 const btn = e.target.closest('.lang-btn');
                 if (!btn) return;
@@ -1588,7 +1626,7 @@
                 if (currentStep < 5) {
                     const step = getStepQuiz(currentRole, currentStep);
                     if (step && !stepChecked[currentStep]) {
-                        alert('Сначала выполни задание в этом шаге! / Complete the task in this step first!');
+                        alert(LANG_DATA[getLang()].stepRequiredAlert);
                         return;
                     }
                 }
@@ -1602,6 +1640,9 @@
             finishBtn.addEventListener('click', completeTraining);
             resetBtn.addEventListener('click', () => resetAll(true));
 
+            // ============================
+            // 4. ДАННЫЕ ДЛЯ РОЛЕЙ (эмодзи)
+            // ============================
             const trainingData = {
                 povar: { emoji: '👨‍🍳' },
                 shef: { emoji: '🧑‍🍳' },
@@ -1611,6 +1652,9 @@
                 director: { emoji: '🏢' }
             };
 
+            // ============================
+            // 5. ИНИЦИАЛИЗАЦИЯ
+            // ============================
             init();
         })();
     </script>
