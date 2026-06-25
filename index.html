@@ -161,6 +161,47 @@
         }
         .welcome-feature .icon { font-size: 28px; display: block; margin-bottom: 4px; }
 
+        .lang-selector {
+            margin: 12px 0 16px;
+            padding: 16px 12px;
+            background: rgba(0,0,0,0.02);
+            border-radius: 20px;
+            text-align: center;
+        }
+        .lang-selector p {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d2a27;
+            margin-bottom: 10px;
+        }
+        .lang-options {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .lang-options .lang-btn {
+            background: rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 40px;
+            padding: 6px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #2d2a27;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .lang-options .lang-btn:hover { background: rgba(0,0,0,0.08); }
+        .lang-options .lang-btn.active {
+            background: #2d2a27;
+            color: white;
+            border-color: #2d2a27;
+        }
+        .lang-options .lang-btn .flag { font-size: 20px; }
+
         .role-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -179,28 +220,6 @@
         .role-item:active { transform: scale(0.96); }
         .role-item .emoji { font-size: 34px; display: block; margin-bottom: 6px; }
         .role-item .label { font-weight: 600; font-size: 15px; color: #2d2a27; }
-
-        .lang-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin: 12px 0 16px;
-        }
-        .lang-item {
-            background: rgba(0,0,0,0.02);
-            border: 1px solid rgba(0,0,0,0.04);
-            border-radius: 20px;
-            padding: 14px 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.15s;
-            font-weight: 600;
-            font-size: 16px;
-            color: #2d2a27;
-        }
-        .lang-item:hover { background: rgba(0,0,0,0.04); }
-        .lang-item:active { transform: scale(0.96); }
-        .lang-item .emoji { font-size: 28px; display: block; margin-bottom: 4px; }
 
         .progress-track {
             display: flex;
@@ -372,8 +391,8 @@
             .welcome-feature { font-size: 11px; padding: 8px 2px; }
             .welcome-feature .icon { font-size: 22px; }
             .step-title { font-size: 20px; }
-            .lang-grid { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
-            .lang-item { padding: 10px 4px; font-size: 14px; }
+            .lang-options .lang-btn { padding: 4px 12px; font-size: 13px; }
+            .lang-options .lang-btn .flag { font-size: 18px; }
         }
         @media (min-width: 600px) {
             .app { max-width: 560px; }
@@ -391,24 +410,8 @@
         </header>
 
         <div class="main-content" id="mainContent">
-            <!-- ВЫБОР ЯЗЫКА -->
-            <div class="page" id="pageLang">
-                <div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:20px 0;">
-                    <span class="welcome-logo">🌐</span>
-                    <h1 class="welcome-title" id="langTitle">Выберите язык</h1>
-                    <p class="welcome-sub" id="langSub">Обучение будет проходить на выбранном языке</p>
-                    <div class="lang-grid" id="langGrid">
-                        <div class="lang-item" data-lang="ru"><span class="emoji">🇷🇺</span>Русский</div>
-                        <div class="lang-item" data-lang="ky"><span class="emoji">🇰🇬</span>Кыргызча</div>
-                        <div class="lang-item" data-lang="uz"><span class="emoji">🇺🇿</span>O‘zbekcha</div>
-                        <div class="lang-item" data-lang="tg"><span class="emoji">🇹🇯</span>Тоҷикӣ</div>
-                        <div class="lang-item" data-lang="en"><span class="emoji">🇬🇧</span>English</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ЗАСТАВКА -->
-            <div class="page" id="pageWelcome">
+            <!-- ГЛАВНАЯ (приветствие + выбор языка) -->
+            <div class="page active" id="pageWelcome">
                 <div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:20px 0;">
                     <span class="welcome-logo">🧑‍🍳</span>
                     <h1 class="welcome-title" id="welcomeTitle">Академия<br><span>качества</span></h1>
@@ -423,6 +426,19 @@
                         <div class="welcome-feature" id="feat2"><span class="icon">⭐</span>Бейджи</div>
                         <div class="welcome-feature" id="feat3"><span class="icon">📚</span>По ролям</div>
                     </div>
+
+                    <!-- Блок выбора языка -->
+                    <div class="lang-selector">
+                        <p id="langPrompt">Выберите язык для обучения / Choose training language</p>
+                        <div class="lang-options" id="langOptions">
+                            <button class="lang-btn" data-lang="ru"><span class="flag">🇷🇺</span> Русский</button>
+                            <button class="lang-btn" data-lang="ky"><span class="flag">🇰🇬</span> Кыргызча</button>
+                            <button class="lang-btn" data-lang="uz"><span class="flag">🇺🇿</span> O‘zbekcha</button>
+                            <button class="lang-btn" data-lang="tg"><span class="flag">🇹🇯</span> Тоҷикӣ</button>
+                            <button class="lang-btn" data-lang="en"><span class="flag">🇬🇧</span> English</button>
+                        </div>
+                    </div>
+
                     <button class="btn btn-primary" id="startBtn" style="margin-top:16px;">🚀 Начать обучение</button>
                     <div style="margin-top:12px; font-size:13px; color:#9e928a; text-align:center;" id="welcomeDuration">~ 7 минут · для всех должностей</div>
                 </div>
@@ -497,14 +513,13 @@
     <script>
         (function() {
             // ============================
-            // 0. ПЕРЕВОДЫ
+            // 0. ПЕРЕВОДЫ (полный объект LANG_DATA — все языки)
             // ============================
             const LANG_DATA = {
                 ru: {
                     name: 'Русский',
                     appTitle: '🍽️ Академия',
-                    langTitle: 'Выберите язык',
-                    langSub: 'Обучение будет проходить на выбранном языке',
+                    langPrompt: 'Выберите язык для обучения',
                     welcomeTitle: 'Академия<br><span>качества</span>',
                     welcomeSub: 'Микрообучение для команды ресторанов доставки',
                     tag1: '#качество',
@@ -540,7 +555,6 @@
                         manager: 'Менеджер',
                         director: 'Директор'
                     },
-                    // Шаги для каждой роли (только заголовки и контент)
                     steps: {
                         povar: [
                             { title: 'Качество — твоя подпись', content: `<p>Каждое блюдо — это лицо ресторана. Гость чувствует вкус, текстуру и температуру.</p><div class="step-highlight">🔥 <strong>Твоя задача:</strong> готовить точно по СТК, соблюдать рецептуру и контролировать внешний вид.</div><div class="reflection-block"><strong>🤔 Подумай над этими вопросами и ответь себе сам:</strong></div><ul class="step-list"><li>Почему качество ингредиентов влияет на вкус?</li><li>Как температура приготовления сохраняет текстуру?</li><li>Что значит «презентабельность» блюда?</li></ul>` },
@@ -585,13 +599,11 @@
                             { title: 'Наследие качества', content: `<p>Создай систему, которая будет работать без тебя:</p><ul class="step-list"><li>Развивай лидеров качества в каждом ресторане.</li><li>Используй стандарты и контролируй их выполнение.</li><li>Инвестируй в обучение и культуру.</li></ul>` }
                         ]
                     },
-                    // Вопросы для финального теста
                     finalQuiz: [
                         { question: 'Что важнее всего при приготовлении блюда?', options: ['Скорость приготовления', 'Качество ингредиентов и соблюдение СТК', 'Количество порций', 'Яркая подача'], correct: 1 },
                         { question: 'Почему важно проверять температуру блюда перед отправкой?', options: ['Чтобы гость получил блюдо правильной температуры', 'Чтобы ускорить доставку', 'Чтобы сэкономить упаковку', 'Это не влияет на качество'], correct: 0 },
                         { question: 'Что делать, если заметил нарушение на любом этапе?', options: ['Пропустить, если никто не видит', 'Остановить процесс и исправить, сообщить администрации', 'Отправить как есть, гость не заметит', 'Сделать вид, что всё в порядке'], correct: 1 }
                     ],
-                    // Викторины для шагов (вопросы и варианты)
                     stepQuizzes: {
                         povar: [
                             { question: 'Какой фактор НЕ относится к контролю качества блюда?', options: ['Свежесть ингредиентов', 'Цвет упаковки', 'Соблюдение рецептуры', 'Температура подачи'], correct: 1 },
@@ -637,14 +649,10 @@
                         ]
                     }
                 },
-                // Другие языки — аналогичная структура, для краткости здесь приведены только ключевые переводы.
-                // В полной версии все тексты переведены на все 5 языков.
-                // Ниже приведены объекты для ky, uz, tg, en с полными переводами.
                 ky: {
                     name: 'Кыргызча',
                     appTitle: '🍽️ Академия',
-                    langTitle: 'Тилди тандаңыз',
-                    langSub: 'Окуу тандалган тилде өтөт',
+                    langPrompt: 'Тилди тандаңыз',
                     welcomeTitle: 'Академия<br><span>сапат</span>',
                     welcomeSub: 'Доставка ресторандар командасы үчүн микроокуу',
                     tag1: '#сапат',
@@ -770,8 +778,7 @@
                 uz: {
                     name: 'O‘zbekcha',
                     appTitle: '🍽️ Akademiya',
-                    langTitle: 'Tilni tanlang',
-                    langSub: 'O‘qitish tanlangan tilda olib boriladi',
+                    langPrompt: 'Tilni tanlang',
                     welcomeTitle: 'Akademiya<br><span>sifat</span>',
                     welcomeSub: 'Yetkazib berish restoranlar jamoasi uchun mikroo‘qitish',
                     tag1: '#sifat',
@@ -897,8 +904,7 @@
                 tg: {
                     name: 'Тоҷикӣ',
                     appTitle: '🍽️ Академия',
-                    langTitle: 'Забонро интихоб кунед',
-                    langSub: 'Таълим бо забони интихобшуда гузаронида мешавад',
+                    langPrompt: 'Забонро интихоб кунед',
                     welcomeTitle: 'Академия<br><span>сифат</span>',
                     welcomeSub: 'Микроомӯзиш барои дастаи ресторанҳои расонидани таом',
                     tag1: '#сифат',
@@ -1024,8 +1030,7 @@
                 en: {
                     name: 'English',
                     appTitle: '🍽️ Academy',
-                    langTitle: 'Choose language',
-                    langSub: 'Training will be conducted in the selected language',
+                    langPrompt: 'Choose training language',
                     welcomeTitle: 'Academy<br><span>of Quality</span>',
                     welcomeSub: 'Micro-learning for delivery restaurant teams',
                     tag1: '#quality',
@@ -1153,7 +1158,7 @@
             // ============================
             // 1. СОСТОЯНИЕ
             // ============================
-            let currentLang = localStorage.getItem('academyLang') || null;
+            let currentLang = localStorage.getItem('academyLang') || 'ru'; // по умолчанию русский
             let currentRole = null;
             let currentStep = 0;
             const totalSteps = 6;
@@ -1163,7 +1168,6 @@
             let quizAnswers = [];
 
             // DOM
-            const pageLang = document.getElementById('pageLang');
             const pageWelcome = document.getElementById('pageWelcome');
             const pageRoles = document.getElementById('pageRoles');
             const pageTraining = document.getElementById('pageTraining');
@@ -1184,10 +1188,10 @@
             const startBtn = document.getElementById('startBtn');
             const backToWelcomeBtn = document.getElementById('backToWelcomeBtn');
             const finishToWelcomeBtn = document.getElementById('finishToWelcomeBtn');
+            const langOptions = document.getElementById('langOptions');
+            const langPrompt = document.getElementById('langPrompt');
 
             // Элементы с текстами
-            const langTitle = document.getElementById('langTitle');
-            const langSub = document.getElementById('langSub');
             const welcomeTitle = document.getElementById('welcomeTitle');
             const welcomeSub = document.getElementById('welcomeSub');
             const tag1 = document.getElementById('tag1');
@@ -1232,9 +1236,6 @@
                 if (!data) return;
                 // Заголовок
                 appTitle.textContent = data.appTitle;
-                // Страница выбора языка
-                langTitle.textContent = data.langTitle;
-                langSub.textContent = data.langSub;
                 // Приветствие
                 welcomeTitle.innerHTML = data.welcomeTitle;
                 welcomeSub.textContent = data.welcomeSub;
@@ -1246,6 +1247,7 @@
                 feat3.textContent = data.feat3;
                 startBtn.textContent = data.startBtn;
                 welcomeDuration.textContent = data.welcomeDuration;
+                langPrompt.textContent = data.langPrompt;
                 // Роли
                 roleTitle.textContent = data.roleTitle;
                 roleSub.textContent = data.roleSub;
@@ -1272,6 +1274,12 @@
                     const roleKey = el.dataset.roleLabel;
                     if (data.roles[roleKey]) el.textContent = data.roles[roleKey];
                 });
+
+                // Подсветить выбранный язык
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.lang === lang);
+                });
+
                 // Если уже на тренировке — перерисовать
                 if (pageTraining.classList.contains('active') && currentRole) {
                     renderStep();
@@ -1304,7 +1312,6 @@
                 const lang = getLang();
                 const roleQuizzes = LANG_DATA[lang]?.stepQuizzes?.[role];
                 if (roleQuizzes && roleQuizzes[stepIndex]) return roleQuizzes[stepIndex];
-                // fallback
                 return null;
             }
 
@@ -1541,27 +1548,30 @@
                 renderStep();
             }
 
-            function initLang() {
-                if (currentLang) {
-                    applyLanguage();
-                    switchPage('pageWelcome');
-                } else {
-                    switchPage('pageLang');
-                }
+            function init() {
+                applyLanguage();
+                // По умолчанию всегда показываем приветствие
+                switchPage('pageWelcome');
+                prevBtn.style.display = 'none';
+                updatePoints();
             }
 
             // ============================
             // 3. ОБРАБОТЧИКИ
             // ============================
-            document.getElementById('langGrid').addEventListener('click', function(e) {
-                const item = e.target.closest('.lang-item');
-                if (!item) return;
-                const lang = item.dataset.lang;
+            // Выбор языка
+            langOptions.addEventListener('click', function(e) {
+                const btn = e.target.closest('.lang-btn');
+                if (!btn) return;
+                const lang = btn.dataset.lang;
                 if (lang && LANG_DATA[lang]) {
                     currentLang = lang;
                     localStorage.setItem('academyLang', lang);
                     applyLanguage();
-                    switchPage('pageWelcome');
+                    // Если обучение уже идёт, перерисовать текущий шаг
+                    if (pageTraining.classList.contains('active') && currentRole) {
+                        renderStep();
+                    }
                 }
             });
 
@@ -1601,9 +1611,17 @@
             // ============================
             // 4. ИНИЦИАЛИЗАЦИЯ
             // ============================
-            initLang();
-            prevBtn.style.display = 'none';
-            updatePoints();
+            // Набор ролей для эмодзи (используется в рендере)
+            const trainingData = {
+                povar: { emoji: '👨‍🍳' },
+                shef: { emoji: '🧑‍🍳' },
+                sbor: { emoji: '📦' },
+                kurier: { emoji: '🛵' },
+                manager: { emoji: '📊' },
+                director: { emoji: '🏢' }
+            };
+
+            init();
         })();
     </script>
 </body>
